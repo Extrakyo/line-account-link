@@ -57,6 +57,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	username := r.FormValue("username")
 	password := r.FormValue("password")
+	token := r.FormValue("token")
 	fmt.Println("username", username, "password", password)
 	var hash string
 	stmt := "SELECT * FROM users WHERE username = ?"
@@ -75,9 +76,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(string(enbyte))
+	sNonce := generateNounce(token, username, password)
 	if err == nil {
 		fmt.Fprint(w, "You have successfully logged in :)")
+		targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
+		log.Println("generate nonce, targetURL=", targetURL)
+		tmpl := template.Must(template.ParseFiles("link.tmpl"))
+		if err := tmpl.Execute(w, targetURL); err != nil {
+			log.Println("Template err:", err)
+		}
 		return
+
 	}
 
 	fmt.Println("incorrect password")
