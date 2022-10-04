@@ -47,6 +47,8 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 var db *sql.DB
 
 func login(w http.ResponseWriter, r *http.Request) {
+
+	var err error
 	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
 	if err != nil {
 		panic(err.Error())
@@ -59,7 +61,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	var hash string
 	stmt := "SELECT * FROM users WHERE username = ?"
 	row := db.QueryRow(stmt, username)
-	err := row.Scan(&hash)
+	err = row.Scan(&hash)
 	fmt.Println("hash from dn:", hash)
 
 	if err := r.ParseForm(); err != nil {

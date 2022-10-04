@@ -13,7 +13,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -25,15 +24,14 @@ import (
 
 var bot *linebot.Client
 var serverURL string
-var db *sql.DB
 
 func main() {
 	var err error
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
+	// db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// defer db.Close()
 
 	serverURL = os.Getenv("LINECORP_PLATFORM_CHANNEL_SERVERURL")
 	if bot, err = linebot.New(os.Getenv("LINECORP_PLATFORM_CHANNEL_CHANNELSECRET"), os.Getenv("LINECORP_PLATFORM_CHANNEL_CHANNELTOKEN")); err != nil {
