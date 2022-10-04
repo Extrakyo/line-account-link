@@ -3,7 +3,7 @@
     "command": "go",
     "options": {
         "env": {
-            "GOPATH": "/Users/Evan/src/go"
+            "GOPATH": "/Users/Extra/go/src"
         }
     },
     "tasks": [
