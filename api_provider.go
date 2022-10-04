@@ -29,9 +29,14 @@ func init() {
 
 }
 
+type Tag struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
+
 	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
 	if err != nil {
 		panic(err.Error())
@@ -50,16 +55,12 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 		log.Printf(user.Username)
+		fmt.Fprintf(w, "%s", user.Username)
 	}
 }
 
 // WEB: For login (just for demo)
 var db *sql.DB
-
-type Tag struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
 
 func login(w http.ResponseWriter, r *http.Request) {
 
