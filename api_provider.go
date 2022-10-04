@@ -32,6 +32,25 @@ func init() {
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	results, err := db.Query("SELECT username, password FROM users")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for results.Next() {
+		var user Tag
+		err = results.Scan(&user.Username, &user.Password)
+		if err != nil {
+			panic(err.Error())
+		}
+		log.Printf(user.Username)
+	}
 }
 
 // WEB: For login (just for demo)
