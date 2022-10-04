@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/base64"
 
 	"fmt"
@@ -43,7 +44,14 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 }
 
 // WEB: For login (just for demo)
+var db *sql.DB
+
 func login(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 	r.ParseForm()
 	username := r.FormValue("username")
 	password := r.FormValue("password")
