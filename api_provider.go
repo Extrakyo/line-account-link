@@ -1,11 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	b64 "encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // CustData : Customers data for provider website.
@@ -21,13 +25,23 @@ type CustData struct {
 var customers []CustData
 
 func init() {
-	//Init customer data in memory
-	customers = append(customers, []CustData{
-		CustData{ID: "11", PW: "pw11", Name: "Tom", Age: 43, Desc: "He is from A corp. likes to read comic books."},
-		CustData{ID: "22", PW: "pw22", Name: "John", Age: 25, Desc: "He is from B corp. likes to read news paper"},
-		CustData{ID: "33", PW: "pw33", Name: "Mary", Age: 13, Desc: "She is a student, like to read science books"},
-	}...,
-	)
+
+	// customers = append(customers, []CustData{
+	// 	CustData{ID: "11", PW: "pw11", Name: "Tom", Age: 43, Desc: "He is from A corp. likes to read comic books."},
+	// 	CustData{ID: "22", PW: "pw22", Name: "John", Age: 25, Desc: "He is from B corp. likes to read news paper"},
+	// 	CustData{ID: "33", PW: "pw33", Name: "Mary", Age: 13, Desc: "She is a student, like to read science books"},
+	// }...,
+	// )
+}
+func config() {
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
+	if err != nil {
+		panic(err)
+	}
+
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
 }
 
 // WEB: List all user in memory
