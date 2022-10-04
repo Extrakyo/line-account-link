@@ -122,9 +122,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 					linkedUser := LinkCustomer{
-						Name:       usr.Name,
-						Age:        usr.Age,
-						Desc:       usr.Desc,
+						Name:       usr.ID,
 						LinkUserID: event.Source.UserID,
 					}
 
@@ -133,7 +131,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.Name+" your account already linked to this chatbot.")).Do(); err != nil {
+						linebot.NewTextMessage("Hi "+usr.ID+" your account already linked to this chatbot.")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}

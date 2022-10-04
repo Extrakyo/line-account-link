@@ -14,11 +14,11 @@ import (
 
 // CustData : Customers data for provider website.
 type CustData struct {
-	ID     string
-	PW     string
-	Name   string
-	Age    int
-	Desc   string
+	ID string
+	PW string
+	// Name   string
+	// Age    int
+	// Desc   string
 	Nounce string
 }
 
@@ -48,7 +48,7 @@ func config() {
 func listCust(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
 	for i, usr := range customers {
-		fmt.Fprintf(w, "%d \tID: %s \tName: %s \tPW: %s \tDesc:%s \n", i, usr.ID, usr.Name, usr.PW, usr.Desc)
+		fmt.Fprintf(w, "%d \tID: %s \tPW: %s \n", i, usr.ID, usr.PW)
 	}
 }
 
