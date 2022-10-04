@@ -27,12 +27,6 @@ var customers []CustData
 
 func init() {
 
-	// customers = append(customers, []CustData{
-	// 	CustData{ID: "11", PW: "pw11", Name: "Tom", Age: 43, Desc: "He is from A corp. likes to read comic books."},
-	// 	CustData{ID: "22", PW: "pw22", Name: "John", Age: 25, Desc: "He is from B corp. likes to read news paper"},
-	// 	CustData{ID: "33", PW: "pw33", Name: "Mary", Age: 13, Desc: "She is a student, like to read science books"},
-	// }...,
-	// )
 }
 
 // WEB: List all user in memory
@@ -43,50 +37,32 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 // WEB: For login (just for demo)
 var db *sql.DB
 
+type Tag struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func login(w http.ResponseWriter, r *http.Request) {
 
-	var err error
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
-	r.ParseForm()
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-	token := r.FormValue("token")
-	fmt.Println("username", username, "password", password)
-	var hash string
-	stmt := "SELECT * FROM users WHERE username = ?"
-	row := db.QueryRow(stmt, username)
-	err = row.Scan(&hash)
-	fmt.Println("hash from dn:", hash)
 
-	if err := r.ParseForm(); err != nil {
-		log.Printf("ParseForm() err: %v\n", err)
-		return
-	}
-	debyte := base64Encode([]byte(hash))
-	enbyte, err := base64Decode(debyte)
-	if hash != string(enbyte) {
-		fmt.Println("hello is not equal to enbyte")
+	results, err := db.Query("SELECT username, password FROM users")
+	if err != nil {
+		panic(err.Error())
 	}
 
-	fmt.Println(string(enbyte))
-	sNonce := generateNounce(token, username, password)
-	if err == nil {
-		fmt.Fprint(w, "You have successfully logged in :)")
-		targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
-		log.Println("generate nonce, targetURL=", targetURL)
-		tmpl := template.Must(template.ParseFiles("link.tmpl"))
-		if err := tmpl.Execute(w, targetURL); err != nil {
-			log.Println("Template err:", err)
+	for results.Next() {
+		var user Tag
+		err = results.Scan(&user.Username, &user.Password)
+		if err != nil {
+			panic(err.Error())
 		}
-		return
-
+		log.Printf(user.Username)
 	}
-
-	fmt.Println("incorrect password")
 
 	// for i, usr := range customers {
 	// 	if usr.ID == name {
