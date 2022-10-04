@@ -30,9 +30,12 @@ func init() {
 }
 
 type Tag struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string
+	Password string
+	Nounce   string
 }
+
+var tags []Tag
 
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +77,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-
+	name := r.FormValue("username")
+	pw := r.FormValue("password")
+	token := r.FormValue("token")
 	for results.Next() {
 		var user Tag
 		err = results.Scan(&user.Username, &user.Password)
@@ -82,6 +87,23 @@ func login(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 		log.Printf(user.Username)
+		if user.Username == name {
+			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
+			sNonce := generateNounce(token, name, pw)
+
+			//update nounce to provider DB to store it.
+
+			//9. The web server redirects the user to the account-linking endpoint.
+			//10. The user accesses the account-linking endpoint.
+			//Print link to user to click it.
+			targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
+			log.Println("generate nonce, targetURL=", targetURL)
+			tmpl := template.Must(template.ParseFiles("link.tmpl"))
+			if err := tmpl.Execute(w, targetURL); err != nil {
+				log.Println("Template err:", err)
+			}
+			return
+		}
 	}
 
 	// for i, usr := range customers {
