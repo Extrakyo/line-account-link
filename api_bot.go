@@ -4,14 +4,11 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"database/sql"
-	"time"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
-//LinkCustomer : A chatbot DB to store account link information.
+// LinkCustomer : A chatbot DB to store account link information.
 type LinkCustomer struct {
 	//Data from CustData from provider.
 	Name   string

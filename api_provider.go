@@ -6,13 +6,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"database/sql"
-	"time"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
-//CustData : Customers data for provider website.
+// CustData : Customers data for provider website.
 type CustData struct {
 	ID     string
 	PW     string
@@ -30,11 +26,11 @@ func init() {
 		CustData{ID: "11", PW: "pw11", Name: "Tom", Age: 43, Desc: "He is from A corp. likes to read comic books."},
 		CustData{ID: "22", PW: "pw22", Name: "John", Age: 25, Desc: "He is from B corp. likes to read news paper"},
 		CustData{ID: "33", PW: "pw33", Name: "Mary", Age: 13, Desc: "She is a student, like to read science books"},
-	}...
-)
+	}...,
+	)
 }
 
-//WEB: List all user in memory
+// WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
 	for i, usr := range customers {
@@ -42,7 +38,7 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//WEB: For login (just for demo)
+// WEB: For login (just for demo)
 func login(w http.ResponseWriter, r *http.Request) {
 	//7. The user enters his/her credentials.
 	if err := r.ParseForm(); err != nil {
@@ -77,7 +73,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Your input name or password error.")
 }
 
-//WEB: For account link
+// WEB: For account link
 func link(w http.ResponseWriter, r *http.Request) {
 	//5. The user accesses the linking URL.
 	TOKEN := r.FormValue("linkToken")
@@ -94,7 +90,7 @@ func link(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//generate nonce (currently nounce combine by token + name + pw)
+// generate nonce (currently nounce combine by token + name + pw)
 func generateNounce(token, name, pw string) string {
 	return b64.StdEncoding.EncodeToString([]byte(token + name + pw))
 }
