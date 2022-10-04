@@ -1,4 +1,4 @@
-module github.com/Extra/line-account-link
+module github.com/Extrakyo/line-account-link
 
 go 1.19
 
