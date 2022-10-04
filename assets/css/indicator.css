@@ -1,0 +1,23 @@
+.indicator {
+    width: 100vw;
+    height: 0.25rem;
+    background: transparent;
+    display: block;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    /* background: var(--indicator-bg); */
+    background: transparent !important;
+}
+
+.indicator .indicatorBar {
+    height: 0.25rem;
+    background: var(--indicator-bar);
+    width: 0%;
+    transition: all 0.3s ease-in;
+}

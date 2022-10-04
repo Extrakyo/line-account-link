@@ -1,0 +1,24 @@
+.backToTop {
+    display: none;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    aspect-ratio: 1 / 1;
+    border-radius: 0.5rem;
+    ;
+    background: var(--button-primary-background);
+    color: var(--button-primary-content);
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 1.25em;
+    cursor: pointer;
+}
+
+.backToTop:hover {
+    background: var(--button-primary-hover);
+}
+
+.backToTop.show {
+    display: flex;
+}

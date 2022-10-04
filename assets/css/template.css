@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap');
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    list-style: none;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background: var(--background);
+    color: var(--font);
+    overflow: hidden;
+    cursor: auto;
+    scroll-behavior: smooth;
+    font-family: 'Poppins', 'Noto Sans TC', 'Font Awesome 5 Pro', sans-serif;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+a {
+    color: var(--link-color);
+}
+
+a:hover {
+    color: var(--link-hover);
+}
+
+::selection {
+    background: var(--selection-bg);
+    color: var(--selection-font);
+}
+
+::-moz-selection {
+    background: var(--selection-bg);
+    color: var(--selection-font);
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: overlay;
+    display: flexbox;
+    flex-direction: column;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.container::-webkit-scrollbar-track {
+    border-radius: 3px;
+    background: var(--scrollbar-track);
+}
+
+.container::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: var(--scrollbar-thumb);
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    border-radius: 3px;
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 760px) {
+    .container {
+        padding: 1rem;
+    }
+}
+
+/* Large tablet */
+@media (min-width: 761px) and (max-width: 1440px) {
+    .container {
+        padding: 1rem 100px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1441px) {
+    .container {
+        padding: 1rem 150px;
+    }
+}

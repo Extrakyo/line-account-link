@@ -1,0 +1,99 @@
+.btnSpinner {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    width: max-content;
+    height: auto;
+    cursor: pointer;
+    width: max-content;
+}
+
+.btnSpinner.flex {
+    width: 100%;
+}
+
+.btnSpinner.primary {
+    background: var(--button-primary-background);
+    color: var(--button-primary-content);
+}
+
+.btnSpinner.primary:hover:enabled {
+    background: var(--button-primary-hover);
+}
+
+.btnSpinner.primary:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.btnSpinner.success {
+    background: var(--button-success-background);
+    color: var(--button-success-content);
+}
+
+.btnSpinner.success:hover:enabled {
+    background: var(--button-success-hover);
+}
+
+.btnSpinner.success:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.btnSpinner.error {
+    background: var(--button-warning-background);
+    color: var(--button-warning-content);
+}
+
+.btnSpinner.error:hover:enabled {
+    background: var(--button-warning-hover);
+}
+
+.btnSpinner.error:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.btnSpinner .buttonSpinner,
+.btnSpinner .text {
+    visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0.25rem 0.5rem;
+}
+
+.btnSpinner .buttonSpinner.show,
+.btnSpinner .text.show {
+    visibility: visible;
+}
+
+.btnSpinner .text {
+    gap: 0.25rem;
+}
+
+.btnSpinner .buttonSpinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.btnSpinner .buttonSpinner i {
+    animation: spin 1.5s infinite linear;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

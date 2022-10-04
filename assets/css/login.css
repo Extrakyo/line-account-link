@@ -1,0 +1,383 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap');
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    list-style: none;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background: var(--background);
+    color: var(--font);
+    overflow: hidden;
+    cursor: auto;
+    scroll-behavior: smooth;
+    font-family: 'Poppins', 'Noto Sans TC', 'Font Awesome 5 Pro', sans-serif;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+a {
+    color: var(--link-color);
+}
+
+a:hover {
+    color: var(--link-hover);
+}
+
+::selection {
+    background: var(--selection-bg);
+    color: var(--selection-font);
+}
+
+::-moz-selection {
+    background: var(--selection-bg);
+    color: var(--selection-font);
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: overlay;
+    display: flexbox;
+    flex-direction: column;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+}
+
+.container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.container::-webkit-scrollbar-track {
+    border-radius: 3px;
+    background: var(--scrollbar-track);
+}
+
+.container::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: var(--scrollbar-thumb);
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    border-radius: 3px;
+    background: var(--scrollbar-thumb-hover);
+}
+
+.loginContainer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: overlay;
+}
+
+.loginContainer .loginSVG {
+    background: var(--background2);
+}
+
+.loginContainer .loginSVG img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.loginContainer .loginFormContainer {
+    flex-direction: column;
+}
+
+.loginContainer .loginFormContainer .loginForm {
+    width: 100%;
+    height: auto;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginContainer .loginFormContainer .loginForm form {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 3rem;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row-reverse;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField i:not(#eye) {
+    font-size: 1.5rem;
+    z-index: 1;
+    position: absolute;
+    left: 0.5rem;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField input {
+    width: 100%;
+    height: calc(20px + 1.5rem);
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0.5rem;
+    /* border-radius: 0; */
+    border: 2px solid var(--background2);
+    /* border-bottom: 2px solid var(--font); */
+    transition: all 0.2s ease-in-out;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField input {
+    padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField input[name="password"] {
+    padding: 0.5rem 2.5rem;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField input:focus {
+    border: 2px solid var(--blue1);
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField input:focus~i:not(#eye) {
+    transition: all 0.2s ease-in-out;
+    font-weight: 900;
+    color: var(--blue1);
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField input,
+.loginContainer .loginFormContainer .loginForm form .inputField input~i:not(#eye) {
+    opacity: 0.6;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField input:focus,
+.loginContainer .loginFormContainer .loginForm form .inputField input:focus~i:not(#eye) {
+    opacity: 1;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField #eye {
+    font-size: 1rem;
+    position: absolute;
+    right: 0.5rem;
+    cursor: pointer;
+}
+
+.loginContainer .loginFormContainer .loginForm form .inputField #eye.active::before {
+    content: '\f070';
+}
+
+.loginContainer .loginFormContainer .loginForm form .btnField {
+    width: 100%;
+    height: auto;
+}
+
+.loginContainer .loginFormContainer .loginForm form .btnField input {
+    font-size: 1.5rem;
+    height: auto;
+    line-height: 1;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .loginContainer {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .loginContainer .loginSVG,
+    .loginContainer .loginFormContainer {
+        display: flex;
+        position: relative;
+    }
+
+    .loginContainer .loginSVG {
+        width: 100vw;
+        height: 30vh;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loginContainer .loginFormContainer {
+        width: 100vw;
+        min-height: 70vw;
+        height: auto;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 1.5rem 3rem;
+    }
+
+    .loginContainer .loginFormContainer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 40px transparent;
+        clip-path: inset(0 50% 50% 0);
+        box-shadow: 0 0 0 30px var(--background2);
+        z-index: 1;
+    }
+
+    .loginContainer .loginFormContainer::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 40px transparent;
+        clip-path: inset(0 0 50% 50%);
+        box-shadow: 0 0 0 30px var(--background2);
+        z-index: 1;
+    }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 760px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .loginContainer {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .loginContainer .loginSVG,
+    .loginContainer .loginFormContainer {
+        display: flex;
+        position: relative;
+    }
+
+    .loginContainer .loginSVG {
+        width: 100vw;
+        height: 30vh;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loginContainer .loginFormContainer {
+        width: 100vw;
+        min-height: 70vw;
+        height: auto;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 1.5rem 3rem;
+    }
+
+    .loginContainer .loginFormContainer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 40px transparent;
+        clip-path: inset(0 50% 50% 0);
+        box-shadow: 0 0 0 30px var(--background2);
+        z-index: 1;
+    }
+
+    .loginContainer .loginFormContainer::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 40px transparent;
+        clip-path: inset(0 0 50% 50%);
+        box-shadow: 0 0 0 30px var(--background2);
+        z-index: 1;
+    }
+}
+
+/* Large tablet */
+@media (min-width: 761px) and (max-width: 1440px) {
+    .container {
+        padding: 1rem 100px;
+    }
+
+    .loginContainer {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loginContainer .loginSVG,
+    .loginContainer .loginFormContainer {
+        width: 50vw;
+        max-width: 50vw;
+        height: 100vh;
+        display: flex;
+        position: relative;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loginContainer .loginFormContainer {
+        padding: 1.5rem 6rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1441px) {
+    .container {
+        padding: 1rem 150px;
+    }
+
+    .loginContainer {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loginContainer .loginSVG,
+    .loginContainer .loginFormContainer {
+        width: 50vw;
+        max-width: 50vw;
+        height: 100vh;
+        display: flex;
+        position: relative;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loginContainer .loginFormContainer {
+        padding: 1.5rem 10rem;
+    }
+}

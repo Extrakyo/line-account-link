@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+pre[class*="language-"],
+code[class*="language-"] {
+	font-family: 'Roboto Mono', monospace !important;
+}
+
+pre[class*="language-"].line-numbers {
+	position: relative;
+	padding-left: 3.8rem !important;
+	counter-reset: linenumber;
+	white-space: pre-wrap;
+}
+
+pre[class*="language-"].line-numbers>code {
+	position: relative;
+	white-space: pre;
+}
+
+.line-numbers .line-numbers-rows {
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+	font-size: 1rem;
+	left: -3.8rem;
+	width: 3rem;
+	letter-spacing: -1px;
+	border-right: 1px solid #999;
+	background: var(--menu-border);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.line-numbers-rows>span {
+	pointer-events: none;
+	display: block;
+	counter-increment: linenumber;
+}
+
+.line-numbers-rows>span::before {
+	content: counter(linenumber);
+	color: #999;
+	display: block;
+	padding-right: 0.8rem;
+	text-align: right;
+}
+
+.namespace {
+	opacity: .7;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #606e87;
+}
+
+.token.punctuation {
+	color: #81a1c1;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #b48ead;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a2bf8c;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+	color: #80a2c1;
+	background: none;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+	color: #81a1c1;
+}
+
+.token.function {
+	color: #8fbcbc;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+	color: #ee9900;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+
+pre[data-line] {
+	position: relative;
+}
+
+pre[class*="language-"]>code[class*="language-"] {
+	position: relative;
+	z-index: 1;
+}
+
+.line-highlight {
+	position: absolute;
+	left: 0;
+	right: 0;
+	padding: inherit 0;
+	margin-top: 1em;
+	background: #3b4251;
+	box-shadow: inset 5px 0 0 #d8dee9;
+	z-index: 0;
+	pointer-events: none;
+	line-height: inherit;
+	white-space: pre;
+}
