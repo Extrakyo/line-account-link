@@ -38,25 +38,6 @@ func init() {
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
-	var err error
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
-	rows, err := db.Query("SELECT * FROM users WHERE username", "extra")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	//切記用完都要做 Close
-	defer rows.Close()
-	for rows.Next() {
-		var username string
-		if err := rows.Scan(&username); err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("%s\n", username)
-	}
-	if err := rows.Err(); err != nil {
-		log.Fatal(err)
-	}
 }
 
 // WEB: For login (just for demo)
