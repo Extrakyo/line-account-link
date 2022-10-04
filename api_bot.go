@@ -49,10 +49,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//2. The LINE Platform returns the link token to the bot server.
 					res, err := bot.IssueLinkToken(userID).Do()
 					if err != nil {
-						log.Println("Issue link token error, err=", err)
+						log.Println("發出連結錯誤, err=", err)
 					}
 
-					log.Println("Get user token:", res.LinkToken)
+					log.Println("獲取使用者令牌:", res.LinkToken)
 
 					//3. The bot server calls the Messaging API to send a linking URL to the user.
 					//4. The LINE Platform sends a linking URL to the user.
