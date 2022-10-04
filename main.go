@@ -17,10 +17,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"database/sql"
-	"time"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
