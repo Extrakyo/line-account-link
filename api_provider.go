@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	b64 "encoding/base64"
+	"crypto/md5"
 	"fmt"
 	"html/template"
 	"log"
@@ -33,15 +34,33 @@ func init() {
 	// }...,
 	// )
 }
-func config() {
+func verifyBefore(ID string, PW string) {
 	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
-	if err != nil {
-		panic(err)
+	checkErr(err)
+	data := md5.Sum([]byte(PW))
+	rows, err := db.Query("SELECT * FROM users WHERE username = ? AND password = ? AND identity	= 'customer'", ID, PW)
+	var exists bool
+	if err := rows.Scan(&exists); err != nil {
+		return err
+	} else if !exists {
+		if err := db.Exec("") {
+			
+		}
 	}
+
+	//切記用完都要做 Close
+	defer rows.Close()
+
 
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
+
+}
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 // WEB: List all user in memory
@@ -55,6 +74,10 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 // WEB: For login (just for demo)
 func login(w http.ResponseWriter, r *http.Request) {
 	//7. The user enters his/her credentials.
+	FormUser := r.FormValue("username") 	
+	FormPassword := w.FormValue("password")
+
+
 	if err := r.ParseForm(); err != nil {
 		log.Printf("ParseForm() err: %v\n", err)
 		return
@@ -62,28 +85,32 @@ func login(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("user")
 	pw := r.FormValue("pass")
 	token := r.FormValue("token")
-	for i, usr := range customers {
-		if usr.ID == name {
-			if pw == usr.PW {
-				//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
-				sNonce := generateNounce(token, name, pw)
 
-				//update nounce to provider DB to store it.
-				customers[i].Nounce = sNonce
+	verifyBefore(name, pw)
 
-				//9. The web server redirects the user to the account-linking endpoint.
-				//10. The user accesses the account-linking endpoint.
-				//Print link to user to click it.
-				targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
-				log.Println("generate nonce, targetURL=", targetURL)
-				tmpl := template.Must(template.ParseFiles("link.tmpl"))
-				if err := tmpl.Execute(w, targetURL); err != nil {
-					log.Println("Template err:", err)
-				}
-				return
-			}
-		}
-	}
+
+	// for i, usr := range customers {
+	// 	if usr.ID == name {
+	// 		if pw == usr.PW {
+	// 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
+	// 			sNonce := generateNounce(token, name, pw)
+
+	// 			//update nounce to provider DB to store it.
+	// 			customers[i].Nounce = sNonce
+
+	// 			//9. The web server redirects the user to the account-linking endpoint.
+	// 			//10. The user accesses the account-linking endpoint.
+	// 			//Print link to user to click it.
+	// 			targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
+	// 			log.Println("generate nonce, targetURL=", targetURL)
+	// 			tmpl := template.Must(template.ParseFiles("link.tmpl"))
+	// 			if err := tmpl.Execute(w, targetURL); err != nil {
+	// 				log.Println("Template err:", err)
+	// 			}
+	// 			return
+	// 		}
+	// 	}
+	// }
 	fmt.Fprintf(w, "Your input name or password error.")
 }
 
