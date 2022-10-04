@@ -38,8 +38,24 @@ func init() {
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
-	for i, usr := range customers {
-		fmt.Fprintf(w, "%d \tID: %s \tPW: %s \n", i, usr.ID, usr.PW)
+	var err error
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
+	rows, err := db.Query("SELECT * FROM users WHERE username")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//切記用完都要做 Close
+	defer rows.Close()
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%s\n", name)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
 	}
 }
 
