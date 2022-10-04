@@ -1,15 +1,14 @@
 package main
 
 import (
-	"database/sql"
-	b64 "encoding/base64"
-	"crypto/md5"
+	"encoding/base64"
+
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"time"
 
+	// "time"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -34,34 +33,6 @@ func init() {
 	// }...,
 	// )
 }
-func verifyBefore(ID string, PW string) {
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@103.200.113.92/foodler")
-	checkErr(err)
-	data := md5.Sum([]byte(PW))
-	rows, err := db.Query("SELECT * FROM users WHERE username = ? AND password = ? AND identity	= 'customer'", ID, PW)
-	var exists bool
-	if err := rows.Scan(&exists); err != nil {
-		return err
-	} else if !exists {
-		if err := db.Exec("") {
-			
-		}
-	}
-
-	//切記用完都要做 Close
-	defer rows.Close()
-
-
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-
-}
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
@@ -73,21 +44,33 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 
 // WEB: For login (just for demo)
 func login(w http.ResponseWriter, r *http.Request) {
-	//7. The user enters his/her credentials.
-	FormUser := r.FormValue("username") 	
-	FormPassword := w.FormValue("password")
-
+	r.ParseForm()
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	fmt.Println("username", username, "password", password)
+	var hash string
+	stmt := "SELECT * FROM users WHERE username = ?"
+	row := db.QueryRow(stmt, username)
+	err := row.Scan(&hash)
+	fmt.Println("hash from dn:", hash)
 
 	if err := r.ParseForm(); err != nil {
 		log.Printf("ParseForm() err: %v\n", err)
 		return
 	}
-	name := r.FormValue("user")
-	pw := r.FormValue("pass")
-	token := r.FormValue("token")
+	debyte := base64Encode([]byte(hash))
+	enbyte, err := base64Decode(debyte)
+	if hash != string(enbyte) {
+		fmt.Println("hello is not equal to enbyte")
+	}
 
-	verifyBefore(name, pw)
+	fmt.Println(string(enbyte))
+	if err == nil {
+		fmt.Fprint(w, "You have successfully logged in :)")
+		return
+	}
 
+	fmt.Println("incorrect password")
 
 	// for i, usr := range customers {
 	// 	if usr.ID == name {
@@ -133,5 +116,13 @@ func link(w http.ResponseWriter, r *http.Request) {
 
 // generate nonce (currently nounce combine by token + name + pw)
 func generateNounce(token, name, pw string) string {
-	return b64.StdEncoding.EncodeToString([]byte(token + name + pw))
+	return base64.StdEncoding.EncodeToString([]byte(token + name + pw))
+}
+
+func base64Encode(src []byte) []byte {
+	return []byte(base64.StdEncoding.EncodeToString(src))
+}
+
+func base64Decode(src []byte) ([]byte, error) {
+	return base64.StdEncoding.DecodeString(string(src))
 }
