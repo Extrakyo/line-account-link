@@ -58,7 +58,7 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 		log.Printf(user.Username)
-		fmt.Fprintf(w, "%s", user.Username)
+		fmt.Fprintf(w, "%s %s \n", user.Username, user.Password)
 	}
 }
 
@@ -73,7 +73,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	results, err := db.Query("SELECT username, password FROM users")
+	results, err := db.Query("SELECT * FROM `users` WHERE `username` = ?")
 	if err != nil {
 		panic(err.Error())
 	}
