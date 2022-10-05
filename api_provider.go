@@ -62,7 +62,7 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 
 		decodedData, err := base64.StdEncoding.DecodeString(encodedData)
 		if err != nil {
-			fmt.Printf("Error decoding Base64 encoded data %v", err)
+			fmt.Printf("Error decoding Base64 encoded data %s", err)
 
 		}
 		fmt.Fprintf(w, "%s %s \n", user.Username, decodedData)
