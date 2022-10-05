@@ -57,8 +57,14 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-		log.Printf(user.Username)
-		fmt.Fprintf(w, "%s %s \n", user.Username, user.Password)
+
+		decodedData, err := base64.StdEncoding.DecodeString(user.Password)
+		if err != nil {
+			fmt.Fprintf(w, "%s %s \n", user.Username, err)
+			log.Printf(user.Username)
+		}
+		fmt.Println(string(decodedData))
+
 	}
 }
 
@@ -151,12 +157,4 @@ func link(w http.ResponseWriter, r *http.Request) {
 // generate nonce (currently nounce combine by token + name + pw)
 func generateNounce(token, name, pw string) string {
 	return base64.StdEncoding.EncodeToString([]byte(token + name + pw))
-}
-
-func base64Encode(src []byte) []byte {
-	return []byte(base64.StdEncoding.EncodeToString(src))
-}
-
-func base64Decode(src []byte) ([]byte, error) {
-	return base64.StdEncoding.DecodeString(string(src))
 }
