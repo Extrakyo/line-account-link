@@ -57,7 +57,7 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-		var Pass_before = user.Password
+		var Pass_before string = user.Password
 
 		data, err := base64.StdEncoding.DecodeString(Pass_before)
 		if err != nil {
