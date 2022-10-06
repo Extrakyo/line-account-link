@@ -37,24 +37,23 @@ var tags []Tag
 
 func listCust(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	db, err := sql.Open("mysql", "extra:Extra123@tcp(127.0.0.1)/foodler")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
 
-	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	results, err := db.Query("INSERT INTO `user`(`Nounce`) VALUES ('123')")
 	if err != nil {
 		panic(err.Error())
 	}
-
 	for results.Next() {
 		var user Tag
-		err = results.Scan(&user.Username, &user.Password)
+		err = results.Scan(&user.Nounce)
 		if err != nil {
 			panic(err.Error())
 		}
-		fmt.Fprintf(w, "%s %s \n", user.Username, user.Password)
+		fmt.Fprintf(w, "%s \n", user.Nounce)
 	}
 }
 
