@@ -92,29 +92,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	// for i, usr := range customers {
-	// 	if usr.ID == name {
-	// 		if pw == usr.PW {
-	// 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
-	// 			sNonce := generateNounce(token, name, pw)
-
-	// 			//update nounce to provider DB to store it.
-	// 			customers[i].Nounce = sNonce
-
-	// 			//9. The web server redirects the user to the account-linking endpoint.
-	// 			//10. The user accesses the account-linking endpoint.
-	// 			//Print link to user to click it.
-	// 			targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
-	// 			log.Println("generate nonce, targetURL=", targetURL)
-	// 			tmpl := template.Must(template.ParseFiles("link.tmpl"))
-	// 			if err := tmpl.Execute(w, targetURL); err != nil {
-	// 				log.Println("Template err:", err)
-	// 			}
-	// 			return
-	// 		}
-	// 	}
-	// }
 	fmt.Fprintf(w, "Your input name or password error.")
 }
 
