@@ -36,7 +36,11 @@ type Tag struct {
 var tags []Tag
 
 func listCust(w http.ResponseWriter, r *http.Request) {
-
+	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 	insertTeacher("Extra", 51)
 }
 
@@ -147,11 +151,7 @@ func MD5(pw string) string {
 }
 
 func insertStudent(studentName string) {
-	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
+
 	rs, err := db.Exec("INSERT INTO `user`(`Nounce`) VALUES (?)", studentName)
 
 	if err != nil {
@@ -164,4 +164,5 @@ func insertStudent(studentName string) {
 		log.Fatalln(err)
 	}
 	log.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
+	fmt.Printf("%s", studentName)
 }
