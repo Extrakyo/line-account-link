@@ -74,8 +74,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 	defer db.Close()
-
-	results, err := db.Query("SELECT * FROM `users` WHERE `username` = ?")
+	var user Tag
+	results, err := db.Query("SELECT * FROM `users` WHERE `username` = ? AND `password` = ? AND `identity` = 'customer'", user.Username, user.Password)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -86,9 +86,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	hasher := md5.New()
 	hasher.Write([]byte(pw))
-
+	log.Printf("%s %s", user.Username, user.Password)
 	for results.Next() {
-		var user Tag
+		// var user Tag
 		err = results.Scan(&user.Username, &user.Password)
 		if err != nil {
 			panic(err.Error())
@@ -96,7 +96,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		// log.Printf(user.Username)
 		if user.Username == name && user.Password == pw {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
-			log.Printf("successful")
+			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 
 			//update nounce to provider DB to store it.
