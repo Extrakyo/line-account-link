@@ -58,8 +58,6 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Fprintf(w, "%s %s \n", user.Username, user.Password)
-		log.Printf(user.Username)
-
 	}
 }
 
