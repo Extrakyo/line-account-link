@@ -10,7 +10,8 @@ import (
 	"log"
 	"net/http"
 
-	// "time"
+	"time"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -20,6 +21,17 @@ type CustData struct {
 	PW     string
 	Nounce string
 }
+
+const (
+	db_UserName  string = "root"
+	db_Password  string = ""
+	Addr         string = "127.0.0.1"
+	Port         int    = 3306
+	Database     string = "foodler"
+	MaxLifetime  int    = 10
+	MaxOpenConns int    = 10
+	MaxIdleConns int    = 10
+)
 
 var customers []CustData
 
@@ -36,12 +48,17 @@ type Tag struct {
 var tags []Tag
 
 func listCust(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/foodler")
+	conn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", db_UserName, db_Password, Addr, Port, Database)
+	//連接MySQL
+	DB, err := sql.Open("mysql", conn)
 	if err != nil {
-		panic(err.Error())
+		fmt.Println("connection to mysql failed:", err)
+		return
 	}
-	defer db.Close()
-	insertTeacher("Extra", 51)
+	DB.SetConnMaxLifetime(time.Duration(MaxLifetime) * time.Second)
+	DB.SetMaxOpenConns(MaxOpenConns)
+	DB.SetMaxIdleConns(MaxIdleConns)
+	insertStudent("esdad")
 }
 
 // WEB: For login (just for demo)
@@ -150,19 +167,17 @@ func MD5(pw string) string {
 	return hex.EncodeToString(algorithm.Sum(nil))
 }
 
-func insertStudent(studentName string) {
-
-	rs, err := db.Exec("INSERT INTO `user`(`Nounce`) VALUES (?)", studentName)
-
+func insertStudent(token string) {
+	rs, err := db.Exec("INSERT INTO `user`(`Nounce`) VALUES ('?')", token)
 	if err != nil {
 		log.Println(err)
 	}
+
 	rowCount, err := rs.RowsAffected()
 	rowId, err := rs.LastInsertId() // 資料表中有Auto_Increment欄位才起作用，回傳剛剛新增的那筆資料ID
 
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
-	fmt.Printf("%s", studentName)
+	fmt.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
 }
