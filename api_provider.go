@@ -43,7 +43,7 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	results, err := db.Query("INSERT INTO `user`(`Nounce`) VALUES ('123')")
+	results, err := db.Query("SELECT Nounce FROM user WHERE 1")
 	if err != nil {
 		panic(err.Error())
 	}
