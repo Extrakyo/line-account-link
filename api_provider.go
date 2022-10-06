@@ -93,8 +93,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-		log.Printf("%s %s \n", user.Username, user.Password)
-		// log.Printf(user.Username)
+		log.Printf(user.Password)
+		log.Printf(user.Username)
 		if user.Username == name && user.Password == pw {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			// log.Printf("successful")
