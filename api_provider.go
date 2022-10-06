@@ -156,7 +156,7 @@ func insertStudent(studentName string) {
 	if err != nil {
 		log.Println(err)
 	}
-
+	fmt.Printf(studentName)
 	rowCount, err := rs.RowsAffected()
 	rowId, err := rs.LastInsertId() // 資料表中有Auto_Increment欄位才起作用，回傳剛剛新增的那筆資料ID
 
