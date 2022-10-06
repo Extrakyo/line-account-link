@@ -75,7 +75,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	var user Tag
-	results, err := db.Query("SELECT * FROM `users` WHERE `username` = ? AND `password` = ? AND `identity` = 'customer'", user.Username, user.Password)
+	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
 	if err != nil {
 		panic(err.Error())
 	}
