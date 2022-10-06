@@ -79,14 +79,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-
+	log.Printf("%s %s", user.Username, user.Password)
 	name := r.FormValue("username")
 	pw := r.FormValue("password")
 	token := r.FormValue("token")
 
 	hasher := md5.New()
 	hasher.Write([]byte(pw))
-	log.Printf("%s %s", user.Username, user.Password)
+
 	for results.Next() {
 		// var user Tag
 		err = results.Scan(&user.Username, &user.Password)
