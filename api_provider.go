@@ -43,7 +43,7 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	results, err := db.Query("SELECT Nounce FROM user WHERE 1")
+	results, err := db.Query("SELECT Nounce FROM user")
 	if err != nil {
 		panic(err.Error())
 	}
