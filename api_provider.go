@@ -152,7 +152,8 @@ func MD5(pw string) string {
 }
 
 func insertStudent(studentName string) {
-	rs, err := db.Exec("INSERT INTO `foodler`.`user` (`Nounce`) VALUES (?)", studentName)
+	rs, err := db.Exec("INSERT INTO `user`(`Nounce`) VALUES (?)", studentName)
+
 	if err != nil {
 		log.Println(err)
 	}
@@ -163,5 +164,5 @@ func insertStudent(studentName string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
+	log.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
 }
