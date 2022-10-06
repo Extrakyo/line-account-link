@@ -68,11 +68,18 @@ func login(w http.ResponseWriter, r *http.Request) {
 		}
 		PW := MD5(pw)
 		log.Printf(PW)
+
 		if user.Username == name {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
+			db, err := sql.Open("mysql", "root:@tcp(127.0.0.1)/foodler")
+			if err != nil {
+				panic(err.Error())
+			}
+			defer db.Close()
+			insertTeacher("Extra", 51)
 
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
@@ -112,6 +119,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Your input name or password error.")
 }
 
+func insertTeacher(s string, i int) {
+	panic("unimplemented")
+}
+
 // WEB: For account link
 func link(w http.ResponseWriter, r *http.Request) {
 	//5. The user accesses the linking URL.
@@ -138,4 +149,19 @@ func MD5(pw string) string {
 	algorithm := md5.New()
 	algorithm.Write([]byte(pw))
 	return hex.EncodeToString(algorithm.Sum(nil))
+}
+
+func insertStudent(studentName string) {
+	rs, err := db.Exec("INSERT INTO `foodler`.`user` (`Nounce`) VALUES (?)", studentName)
+	if err != nil {
+		log.Println(err)
+	}
+
+	rowCount, err := rs.RowsAffected()
+	rowId, err := rs.LastInsertId() // 資料表中有Auto_Increment欄位才起作用，回傳剛剛新增的那筆資料ID
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
 }
