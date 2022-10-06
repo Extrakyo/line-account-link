@@ -45,7 +45,7 @@ func main() {
 	http.HandleFunc("/callback", callbackHandler)
 
 	//Web APIs
-	// http.HandleFunc("/", listCust)
+	http.HandleFunc("/", listCust)
 	http.HandleFunc("/link", link)
 	http.HandleFunc("/login", login)
 
