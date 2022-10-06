@@ -37,7 +37,7 @@ var tags []Tag
 
 func listCust(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1)/foodler")
+	db, err := sql.Open("mysql", "extra:Extra123@localhost/foodler")
 	if err != nil {
 		panic(err.Error())
 	}
