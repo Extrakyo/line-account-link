@@ -57,8 +57,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	for results.Next() {
 		// var user Tag
-		name := r.FormValue("username")
-		pw := r.FormValue("password")
+		name := r.FormValue("user")
+		pw := r.FormValue("pass")
 		token := r.FormValue("token")
 
 		var user Tag
