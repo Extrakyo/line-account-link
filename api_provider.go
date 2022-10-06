@@ -86,6 +86,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	hasher := md5.New()
 	hasher.Write([]byte(pw))
+
 	for results.Next() {
 		var user Tag
 		err = results.Scan(&user.Username, &user.Password)
@@ -96,7 +97,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if user.Username == name && user.Password == pw {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			sNonce := generateNounce(token, name, pw)
-
+			fmt.Fprintf(w, "successful")
 			//update nounce to provider DB to store it.
 
 			//9. The web server redirects the user to the account-linking endpoint.
