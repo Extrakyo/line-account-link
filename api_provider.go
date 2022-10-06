@@ -92,7 +92,25 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
-			customers[i].Nounce = sNonce
+			db, err := sql.Open("mysql", "be7bdc6fdc212e:71b6a0d4@tcp(us-cdbr-east-06.cleardb.net)/heroku_7778b9159bd7e07")
+			if err != nil {
+				panic(err.Error())
+			}
+			defer db.Close()
+
+			results, err := db.Query("UPDATE `heroku_7778b9159bd7e07` `user` SET `Nounce` = ?", &user.Nounce)
+			if err != nil {
+				panic(err.Error())
+			}
+			for results.Next() {
+				var user Tag
+				err = results.Scan(&user.Nounce)
+				if err != nil {
+					panic(err.Error())
+				}
+				fmt.Fprintf(w, "%s \n", user.Nounce)
+			}
+
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
 			//Print link to user to click it.
