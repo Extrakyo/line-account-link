@@ -79,7 +79,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
-			insertStudent(sNonce)
 
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
@@ -145,19 +144,4 @@ func MD5(pw string) string {
 	algorithm := md5.New()
 	algorithm.Write([]byte(pw))
 	return hex.EncodeToString(algorithm.Sum(nil))
-}
-
-func insertStudent(studentName string) {
-	rs, errd := db.Exec("INSERT INTO `user` (`Nounce`) VALUES (?)", studentName)
-	if errd != nil {
-		log.Println(errd)
-	}
-
-	rowCount, errd := rs.RowsAffected()
-	rowId, errd := rs.LastInsertId() // 資料表中有Auto_Increment欄位才起作用，回傳剛剛新增的那筆資料ID
-
-	if errd != nil {
-		log.Fatalln(errd)
-	}
-	fmt.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
 }
