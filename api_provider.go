@@ -81,11 +81,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	pw := r.FormValue("password")
 	token := r.FormValue("token")
 
-	hash := md5.New()
-	hash.Write([]byte(pw))
-	b := hash.Sum(nil)
-	pw_d := hex.EncodeToString(b)
-	log.Printf(pw_d)
 	for results.Next() {
 		// var user Tag
 		var user Tag
@@ -93,7 +88,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-		if user.Username == name && user.Password == pw_d {
+		PW := MD5(pw)
+		log.Printf(PW)
+		if user.Username == name && user.Password == PW {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
@@ -157,4 +154,10 @@ func link(w http.ResponseWriter, r *http.Request) {
 // generate nonce (currently nounce combine by token + name + pw)
 func generateNounce(token, name string) string {
 	return base64.StdEncoding.EncodeToString([]byte(token + name))
+}
+
+func MD5(pw string) string {
+	algorithm := md5.New()
+	algorithm.Write([]byte(pw))
+	return hex.EncodeToString(algorithm.Sum(nil))
 }
