@@ -37,24 +37,6 @@ var tags []Tag
 
 func listCust(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", " root@localhost/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
-	results, err := db.Query("SELECT Nounce FROM user")
-	if err != nil {
-		panic(err.Error())
-	}
-	for results.Next() {
-		var user Tag
-		err = results.Scan(&user.Nounce)
-		if err != nil {
-			panic(err.Error())
-		}
-		fmt.Fprintf(w, "%s \n", user.Nounce)
-	}
 }
 
 // WEB: For login (just for demo)
