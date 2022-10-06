@@ -93,11 +93,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-		log.Printf(user.Username)
+		// log.Printf(user.Username)
 		if user.Username == name && user.Password == pw {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
-			sNonce := generateNounce(token, name)
 			log.Printf("successful")
+			sNonce := generateNounce(token, name)
+
 			//update nounce to provider DB to store it.
 
 			//9. The web server redirects the user to the account-linking endpoint.
