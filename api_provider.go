@@ -36,7 +36,12 @@ type Tag struct {
 var tags []Tag
 
 func listCust(w http.ResponseWriter, r *http.Request) {
-
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+	insertTeacher("Extra", 51)
 }
 
 // WEB: For login (just for demo)
@@ -74,12 +79,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
-			db, err := sql.Open("mysql", "root:@tcp(127.0.0.1)/foodler")
-			if err != nil {
-				panic(err.Error())
-			}
-			defer db.Close()
-			insertTeacher("Extra", 51)
 
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
