@@ -98,7 +98,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			defer db.Close()
 
-			results, err := db.Query("INSERT INTO user Nounce VALUES ?", sNonce)
+			results, err := db.Query("INSERT INTO user Nounce VALUES 234")
 			if err != nil {
 				panic(err.Error())
 			}
