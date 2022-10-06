@@ -92,7 +92,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
-			db, err := sql.Open("mysql", "be7bdc6fdc212e:71b6a0d4@tcp(us-cdbr-east-06.cleardb.net)/heroku_7778b9159bd7e07")
+			db, err := sql.Open("mysql", "be7bdc6fdc212e:71b6a0d4@us-cdbr-east-06.cleardb.net/heroku_7778b9159bd7e07")
 			if err != nil {
 				panic(err.Error())
 			}
