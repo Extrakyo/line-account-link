@@ -55,10 +55,14 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("connection to mysql failed:", err)
 		return
 	}
+	rs, err := db.Exec("INSERT INTO `school`.`student`(`name`) VALUES (?)")
+	if err != nil {
+		log.Println(err)
+	}
 	DB.SetConnMaxLifetime(time.Duration(MaxLifetime) * time.Second)
 	DB.SetMaxOpenConns(MaxOpenConns)
 	DB.SetMaxIdleConns(MaxIdleConns)
-	insertStudent("esdad")
+
 }
 
 // WEB: For login (just for demo)
@@ -135,10 +139,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Your input name or password error.")
 }
 
-func insertTeacher(s string, i int) {
-	panic("unimplemented")
-}
-
 // WEB: For account link
 func link(w http.ResponseWriter, r *http.Request) {
 	//5. The user accesses the linking URL.
@@ -165,19 +165,4 @@ func MD5(pw string) string {
 	algorithm := md5.New()
 	algorithm.Write([]byte(pw))
 	return hex.EncodeToString(algorithm.Sum(nil))
-}
-
-func insertStudent(token string) {
-	rs, err := db.Exec("INSERT INTO `user`(`Nounce`) VALUES ('?')", token)
-	if err != nil {
-		log.Println(err)
-	}
-
-	rowCount, err := rs.RowsAffected()
-	rowId, err := rs.LastInsertId() // 資料表中有Auto_Increment欄位才起作用，回傳剛剛新增的那筆資料ID
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
 }
