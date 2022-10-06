@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"html/template"
 	"log"
@@ -81,9 +82,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 	pw := r.FormValue("password")
 	token := r.FormValue("token")
 
-	hasher := md5.New()
-	hasher.Write([]byte(pw))
-
+	hash := md5.New()
+	hash.Write([]byte(pw))
+	b := hash.Sum(nil)
+	pw_d := hex.EncodeToString(b)
 	for results.Next() {
 		// var user Tag
 		var user Tag
@@ -91,13 +93,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-		log.Printf(user.Password)
-		log.Printf(user.Username)
-		if user.Username == name && user.Password == pw {
+		if user.Username == name && user.Password == pw_d {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
-
+			log.Printf("123")
 			//update nounce to provider DB to store it.
 
 			//9. The web server redirects the user to the account-linking endpoint.
