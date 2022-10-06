@@ -147,7 +147,7 @@ func MD5(pw string) string {
 }
 
 func insertStudent(studentName string) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1)/foodler")
+	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/foodler")
 	if err != nil {
 		panic(err.Error())
 	}
