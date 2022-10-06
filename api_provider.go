@@ -98,7 +98,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			defer db.Close()
 
-			results, err := db.Query("UPDATE `heroku_7778b9159bd7e07` `user` SET `Nounce` = ?", &user.Nounce)
+			results, err := db.Query("INSERT INTO user Nounce VALUES ?", sNonce)
 			if err != nil {
 				panic(err.Error())
 			}
