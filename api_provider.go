@@ -38,31 +38,31 @@ type Tag struct {
 var tags []Tag
 
 // WEB: List all user in memory
-func listCust(w http.ResponseWriter, r *http.Request) {
+// func listCust(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
+// 	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+// 	if err != nil {
+// 		panic(err.Error())
+// 	}
+// 	defer db.Close()
 
-	results, err := db.Query("SELECT username, password FROM users")
-	if err != nil {
-		panic(err.Error())
-	}
+// 	results, err := db.Query("SELECT username, password FROM users")
+// 	if err != nil {
+// 		panic(err.Error())
+// 	}
 
-	for results.Next() {
-		var user Tag
-		err = results.Scan(&user.Username, &user.Password)
-		if err != nil {
-			panic(err.Error())
-		}
+// 	for results.Next() {
+// 		var user Tag
+// 		err = results.Scan(&user.Username, &user.Password)
+// 		if err != nil {
+// 			panic(err.Error())
+// 		}
 
-		fmt.Fprintf(w, "%s %s \n", user.Username, user.Password)
-		log.Printf(user.Username)
+// 		fmt.Fprintf(w, "%s %s \n", user.Username, user.Password)
+// 		log.Printf(user.Username)
 
-	}
-}
+// 	}
+// }
 
 // WEB: For login (just for demo)
 var db *sql.DB
@@ -79,7 +79,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-	log.Printf("%s %s", user.Username, user.Password)
+
 	name := r.FormValue("username")
 	pw := r.FormValue("password")
 	token := r.FormValue("token")
@@ -93,6 +93,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
+		log.Printf("%s %s \n", user.Username, user.Password)
 		// log.Printf(user.Username)
 		if user.Username == name && user.Password == pw {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
