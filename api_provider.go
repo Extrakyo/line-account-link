@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"database/sql"
 	"encoding/base64"
 	"fmt"
@@ -78,9 +79,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	name := r.FormValue("username")
 	pw := r.FormValue("password")
 	token := r.FormValue("token")
+
+	hasher := md5.New()
+	hasher.Write([]byte(pw))
 	for results.Next() {
 		var user Tag
 		err = results.Scan(&user.Username, &user.Password)
@@ -88,7 +93,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 		log.Printf(user.Username)
-		if user.Username == name {
+		if user.Username == name && user.Password == pw {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			sNonce := generateNounce(token, name, pw)
 
