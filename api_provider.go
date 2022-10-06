@@ -68,7 +68,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		}
 		PW := MD5(pw)
 		log.Printf(PW)
-		if user.Username == name && user.Password == PW {
+		if user.Username == name {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
