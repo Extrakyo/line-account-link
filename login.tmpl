@@ -50,18 +50,18 @@
                     <h1>登入</h1>
                 </header>
                 <div class="loginForm">
-                    <form action="#" method="post" id="loginForm" name="loginForm">
+                    <form action="login" method="post" id="loginForm" name="loginForm">
                         <input type="hidden" value="{{.}}" name="token" />
                         <div class="inputField" data-group="username">
-                            <input type="text" name="user" id="username" value="" placeholder="">
+                            <input type="text" name="user" id="username" value="" placeholder="Username">
                             <i class="far fa-user fa-fw"></i>
                         </div>
                         <div class="inputField" data-group="password">
-                            <input type="password" name="pass" id="password" value="" placeholder="">
+                            <input type="password" name="pass" id="password" value="" placeholder="Password">
                             <i class="far fa-lock-alt fa-fw"></i>
                         </div>
                         <div class="btnField">
-                            <input type="submit" class="primary flex" value="登入">
+                            <input type="submit" name="login" class="primary flex" value="login">
                         </div>
                     </form>
                 </div>
