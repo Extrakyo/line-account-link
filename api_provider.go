@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/base64"
-
 	"fmt"
 	"html/template"
 	"log"
@@ -57,14 +56,8 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-		var Pass_before string = user.Password
 
-		data, err := base64.StdEncoding.DecodeString(Pass_before)
-		if err != nil {
-			fmt.Println("error", err)
-			return
-		}
-		fmt.Fprintf(w, "%s %s \n", user.Username, data)
+		fmt.Fprintf(w, "%s %s \n", user.Username, user.Password)
 		log.Printf(user.Username)
 
 	}
