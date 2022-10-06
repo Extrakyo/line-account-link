@@ -16,11 +16,8 @@ import (
 
 // CustData : Customers data for provider website.
 type CustData struct {
-	ID string
-	PW string
-	// Name   string
-	// Age    int
-	// Desc   string
+	ID     string
+	PW     string
 	Nounce string
 }
 
@@ -77,12 +74,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 
-	name := r.FormValue("username")
-	pw := r.FormValue("password")
-	token := r.FormValue("token")
-
 	for results.Next() {
 		// var user Tag
+		name := r.FormValue("username")
+		pw := r.FormValue("password")
+		token := r.FormValue("token")
+
 		var user Tag
 		err = results.Scan(&user.Username, &user.Password)
 		if err != nil {
@@ -95,7 +92,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
-
+			customers[i].Nounce = sNonce
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
 			//Print link to user to click it.
