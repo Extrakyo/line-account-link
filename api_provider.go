@@ -43,7 +43,7 @@ var db *sql.DB
 
 func login(w http.ResponseWriter, r *http.Request) {
 
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1)/foodler")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -53,12 +53,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-
-	db, errd := sql.Open("mysql", "root:@tcp(localhost:3306)/foodler")
-	if errd != nil {
-		panic(errd.Error())
-	}
-	defer db.Close()
 
 	for results.Next() {
 		// var user Tag
