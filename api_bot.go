@@ -12,8 +12,6 @@ import (
 type LinkCustomer struct {
 	//Data from CustData from provider.
 	Name   string
-	Age    int
-	Desc   string
 	Nounce string
 	//For chatbot linked data.
 	LinkUserID string
@@ -43,7 +41,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				switch {
-				case strings.EqualFold(message.Text, "會員"):
+				case strings.EqualFold(message.Text, "#1"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
@@ -79,7 +77,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+usr.Name+"!, Nice to see you. \nWe know you: "+usr.Desc+" \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("你好 "+usr.Name+"!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
@@ -117,12 +115,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			//search from all user using nounce.
-			for _, usr := range customers {
+			for _, usr := range tags {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 					linkedUser := LinkCustomer{
-						Name:       usr.ID,
+						Name:       usr.Username,
 						LinkUserID: event.Source.UserID,
 					}
 
@@ -131,7 +129,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.ID+" your account already linked to this chatbot.")).Do(); err != nil {
+						linebot.NewTextMessage("Hi "+usr.Username+" your account already linked to this chatbot.")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
