@@ -15,11 +15,6 @@ import (
 
 // CustData : Customers data for provider website.
 func init() {
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
 
 }
 
@@ -39,6 +34,12 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 var db *sql.DB
 
 func login(w http.ResponseWriter, r *http.Request) {
+
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 
 	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
 	if err != nil {
