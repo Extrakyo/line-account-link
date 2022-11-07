@@ -14,9 +14,6 @@ import (
 )
 
 // CustData : Customers data for provider website.
-func init() {
-
-}
 
 type Tag struct {
 	Username string
@@ -25,6 +22,9 @@ type Tag struct {
 }
 
 var tags []Tag
+
+func init() {
+}
 
 func listCust(w http.ResponseWriter, r *http.Request) {
 
@@ -65,6 +65,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// log.Printf("successful")
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
+			// tags[i].Nounce = sNonce
+
+			user.Nounce = sNonce
 
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
