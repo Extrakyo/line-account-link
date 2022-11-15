@@ -1,91 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh-tw" data-theme="dark">
+<html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="apple-mobile-web-app-title" content="後臺管理系統｜Foodler">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="images/logo2.png">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=0.7, minimum-scale=0.7, maximum-scale=0.7"> -->
-    <title>後臺管理系統｜Foodler</title>
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/root.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/login.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/header.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/components.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/loadingSpinner.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/indicator.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/popupMessage.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/footer.css">
-    <link rel="stylesheet" href="https://foodler.iistw.com/dashboard/assets/css/backToTop.css">
-    <meta name="description" content="後臺管理系統｜Foodler">
-    <meta property="og:description" content="後臺管理系統｜Foodler">
-    <meta itemprop="name" content="後臺管理系統｜Foodler">
-    <meta itemprop="image" content="images/image.png">
-    <meta property="og:image" content="images/image.png">
+  <meta charset="UTF-8">
+  <title>Log-in</title>
 </head>
 
 <body>
-    <!-- Loading spinner -->
-    <div class="progress" id="progress_div">
-        <div class="bar" id="bar1"></div>
-        <div class="percent" id="percent1"></div>
-    </div>
-    <!-- Popup message -->
-    <div class="popupMessage" id="popupMessage"></div>
-    <div class="container">
-        <!-- Indicator -->
-        <div class="indicator">
-            <div class="indicatorBar" id="indicatorBar"></div>
-        </div>
-        <div class="loginContainer">
-            <div class="loginSVG">
-                <img src="https://foodler.iistw.com/dashboard/images/login-dark.svg">
-            </div>
-            <div class="loginFormContainer">
-                <header>
-                    <h1>登入</h1>
-                </header>
-                <div class="loginForm">
-                    <form action="login" method="post" id="loginForm" name="loginForm">
-                        <input type="hidden" value="{{.}}" name="token" />
-                        <div class="inputField" data-group="username">
-                            <input type="text" name="user" id="username" value="" placeholder="Username">
-                            <i class="far fa-user fa-fw"></i>
-                        </div>
-                        <div class="inputField" data-group="password">
-                            <input type="password" name="pass" id="password" value="" placeholder="Password">
-                            <i class="far fa-lock-alt fa-fw"></i>
-                        </div>
-                        <div class="btnField">
-                            <input type="submit" name="login" class="primary flex" value="login">
-                        </div>
-                    </form>
-                </div>
-                <footer>
-                    <p>Foodler｜Copyright © 2022 <a target="_blank" href="https://iistw.com/">Infinity資訊</a>. All rights
-                        reserved.</p>
-                </footer>
-            </div>
-        </div>
-    </div>
-    <!-- Back to top -->
-    <div class="backToTop"><i class="fas fa-angle-up fa-fw"></i></div>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Loading spinner -->
-    <script src="https://foodler.iistw.com/dashboard/assets/js/loadingSpinner.js"></script>
-    <!-- Popup message -->
-    <script src="https://foodler.iistw.com/dashboard/assets/js/popupMessage.js"></script>
-    <!-- Indicator -->
-    <script src="https://foodler.iistw.com/dashboard/assets/js/indicator.js"></script>
-    <!-- Back to top -->
-    <script src="https://foodler.iistw.com/dashboard/assets/js/backToTop.js"></script>
-    <!-- Login -->
-    <script src="https://foodler.iistw.com/dashboard/assets/js/login2.js"></script>
+
+  <center>
+    <h1>Log-in</h1><br>
+  <form action="login" method="post"><br>
+    使用者帳戶：<input type="text" name="user" placeholder="Username"><br>
+    使用者密碼：<input type="password" name="pass" placeholder="Password"><br>
+  	<input type="hidden" value="{{.}}" name="token" />
+	<input type="submit" name="login" class="login login-submit" value="login"><br>
+  </form>
+</center>
+
 </body>
 
 </html>
