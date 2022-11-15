@@ -69,6 +69,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// tags[i].Nounce = sNonce
 
 			user.Nounce = sNonce
+			user.USERID = "12"
 			// user_Id(user.Username, user.Password, user.Nounce, u)
 			user_Id(user.Username, user.Password, user.Nounce, user.USERID)
 			//9. The web server redirects the user to the account-linking endpoint.
