@@ -67,7 +67,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
 			// tags[i].Nounce = sNonce
-			user_Id(sNonce, user.Username)
+			user_Id(sNonce, name)
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
 			//Print link to user to click it.
@@ -113,8 +113,6 @@ func MD5(pw string) string {
 }
 
 func user_Id(nounce_db string, user_db string) {
-	// rs, err := db.Exec("INSERT INTO `linebot`(`username`, `password`, `nounce`, `userId`) VALUES (?, ?, ?, ?)", user_db, pasasword_db, nounce_db, userId_db)
-
 	rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", nounce_db, user_db)
 	if err != nil {
 		log.Println("exec failed:", err)
