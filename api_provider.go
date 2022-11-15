@@ -68,7 +68,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			// tags[i].Nounce = sNonce
 
 			user.Nounce = sNonce
-			insertStudent(name, user.Password, user.Nounce)
+			insertStudent(user.Username, user.Password, user.Nounce)
 
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
@@ -118,5 +118,4 @@ func insertStudent(account_db string, password_db string, nonce_db string) {
 	if err != nil {
 		log.Println(err)
 	}
-
 }
