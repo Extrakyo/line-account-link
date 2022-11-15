@@ -114,16 +114,9 @@ func MD5(pw string) string {
 }
 
 func insertStudent(account_db string, password_db string, nonce_db string) {
-	rs, err := db.Exec("INSERT INTO `linebot`(`username`, `password`, `nounce`) VALUES (? , ? , ?)", account_db, password_db, nonce_db)
+	_, err := db.Exec("INSERT INTO `linebot`(`username`, `password`, `nounce`) VALUES (? , ? , ?)", account_db, password_db, nonce_db)
 	if err != nil {
 		log.Println(err)
 	}
 
-	rowCount, err := rs.RowsAffected()
-	rowId, err := rs.LastInsertId() // 資料表中有Auto_Increment欄位才起作用，回傳剛剛新增的那筆資料ID
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Printf("新增 %d 筆資料，id = %d \n", rowCount, rowId)
 }
