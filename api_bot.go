@@ -41,7 +41,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				switch {
-				case strings.EqualFold(message.Text, "#1"):
+				case strings.EqualFold(message.Text, "1"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
