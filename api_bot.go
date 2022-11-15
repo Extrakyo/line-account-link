@@ -33,7 +33,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", user.UserID, user.Nounce)
+	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	if err != nil {
+		panic(err.Error())
+	}
+	err = results.Scan(&user.Name)
+
+	rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", user.UserID, user.Name)
 	if err != nil {
 		log.Println("exec failed:", err)
 		return
