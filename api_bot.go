@@ -1,10 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strings"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
@@ -14,13 +16,42 @@ type LinkCustomer struct {
 	Name   string
 	Nounce string
 	//For chatbot linked data.
-	LinkUserID string
+	UserID string
 }
 
 var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
+
+	var user LinkCustomer
+
+	//connect db
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", user.UserID, user.Nounce)
+	if err != nil {
+		log.Println("exec failed:", err)
+		return
+	}
+
+	idAff, err := rs.RowsAffected()
+	if err != nil {
+		log.Println("RowsAffected failed:", err)
+		return
+	}
+	log.Println("id:", idAff)
+	if idAff == 0 {
+		_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", user.UserID)
+		if err != nil {
+			log.Println("exec failed:", err)
+		}
+	}
+	log.Println("success")
 
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
@@ -74,7 +105,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
-					if usr.LinkUserID == event.Source.UserID {
+					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
 							linebot.NewTextMessage("你好 "+usr.Name+"!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
@@ -108,7 +139,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
-				if event.Source.UserID == user.LinkUserID {
+				if event.Source.UserID == user.UserID {
 					log.Println("User:", user, " already linked account.")
 					return
 				}
@@ -120,8 +151,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 					linkedUser := LinkCustomer{
-						Name:       usr.Username,
-						LinkUserID: event.Source.UserID,
+						Name:   usr.Username,
+						UserID: event.Source.UserID,
 					}
 
 					linkedCustomers = append(linkedCustomers, linkedUser)
