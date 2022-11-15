@@ -67,7 +67,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			sNonce := generateNounce(token, name)
 			//update nounce to provider DB to store it.
 			// tags[i].Nounce = sNonce
-			user_Id(sNonce, name)
+			// user_Id(sNonce, name)
 			//9. The web server redirects the user to the account-linking endpoint.
 			//10. The user accesses the account-linking endpoint.
 			//Print link to user to click it.
