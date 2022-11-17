@@ -129,7 +129,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					defer db.Close()
 
-					rsd, err := db.Query("SELECT `nounce` FROM `linebot` WHERE username = extra")
+					rsd, err := db.Query("SELECT `nounce` FROM `linebot`")
 					if err != nil {
 						panic(err.Error())
 					}
@@ -155,7 +155,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println("id:", idAff)
 					if idAff == 0 {
-						_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", user.Nounce)
+						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", user.UserID)
 						if err != nil {
 							log.Println("exec failed:", err)
 						}
