@@ -103,6 +103,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
+
+					results, err := db.Query("SELECT userId FROM linebot WHERE `username` = 'extra'")
+					if err != nil {
+						panic(err.Error())
+					}
+
+					err = results.Scan(&userID)
+					if err != nil {
+						panic(err.Error())
+					}
+
 					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
