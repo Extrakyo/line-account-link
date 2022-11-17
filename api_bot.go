@@ -1,7 +1,7 @@
 package main
 
 import (
-	"database/sql"
+	// "database/sql"
 	"log"
 	"net/http"
 	"strings"
@@ -23,41 +23,6 @@ var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
-
-	var user LinkCustomer
-
-	//connect db
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
-	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
-	if err != nil {
-		panic(err.Error())
-	}
-	err = results.Scan(&user.Name)
-
-	rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", user.UserID, user.Name)
-	if err != nil {
-		log.Println("exec failed:", err)
-		return
-	}
-
-	idAff, err := rs.RowsAffected()
-	if err != nil {
-		log.Println("RowsAffected failed:", err)
-		return
-	}
-	log.Println("id:", idAff)
-	if idAff == 0 {
-		_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", user.UserID)
-		if err != nil {
-			log.Println("exec failed:", err)
-		}
-	}
-	log.Println("success")
 
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
