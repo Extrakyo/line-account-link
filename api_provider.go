@@ -64,7 +64,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if user.Username == name && user.Password == PW {
 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 			// log.Printf("successful")
-			sNonce := generateNounce(token, name)
+			sNonce := generateNounce(token, name, pw)
 			//update nounce to provider DB to store it.
 			// tags[i].Nounce = sNonce
 			user.Nounce = sNonce
@@ -119,8 +119,8 @@ func link(w http.ResponseWriter, r *http.Request) {
 }
 
 // generate nonce (currently nounce combine by token + name + pw)
-func generateNounce(token, name string) string {
-	return base64.StdEncoding.EncodeToString([]byte(token + name))
+func generateNounce(token, name, pw string) string {
+	return base64.StdEncoding.EncodeToString([]byte(token + name + pw))
 }
 
 func MD5(pw string) string {
