@@ -2,6 +2,7 @@ package main
 
 import (
 	// "database/sql"
+	"database/sql"
 	"log"
 	"net/http"
 	"strings"
@@ -120,6 +121,47 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			for _, usr := range tags {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
+
+					var user LinkCustomer
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
+
+					rsd, err := db.Query("SELECT `nounce` FROM `linebot` WHERE username = extra")
+					if err != nil {
+						panic(err.Error())
+					}
+
+					for rsd.Next() {
+						// var user Tag
+
+						err = rsd.Scan(&user.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+					}
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce = ?", user.UserID, user.Nounce)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
+					}
+
+					idAff, err := rs.RowsAffected()
+					if err != nil {
+						log.Println("RowsAffected failed:", err)
+						return
+					}
+					log.Println("id:", idAff)
+					if idAff == 0 {
+						_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", user.Nounce)
+						if err != nil {
+							log.Println("exec failed:", err)
+						}
+					}
+					log.Println("success")
+
 					//Append to linked DB.
 					linkedUser := LinkCustomer{
 						Name:   usr.Username,

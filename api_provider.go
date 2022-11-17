@@ -81,16 +81,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			log.Println("id:", idAff)
 			if idAff == 0 {
-				_, err := db.Exec("INSERT INTO `linebot`(‵username`, `password`, `nounce`) VALUES (?, ?, ?)", user.Username, user.Password, user.Nounce)
+				_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", user.Nounce)
 				if err != nil {
 					log.Println("exec failed:", err)
 				}
 			}
 			log.Println("success")
-			// user_Id(sNonce, name)
-			//9. The web server redirects the user to the account-linking endpoint.
-			//10. The user accesses the account-linking endpoint.
-			//Print link to user to click it.
+
 			targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
 			log.Println("generate nonce, targetURL=", targetURL)
 			tmpl := template.Must(template.ParseFiles("link.tmpl"))
@@ -131,25 +128,3 @@ func MD5(pw string) string {
 	algorithm.Write([]byte(pw))
 	return hex.EncodeToString(algorithm.Sum(nil))
 }
-
-// func user_Id(nounce_db string, user_db string) {
-// 	rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", nounce_db, user_db)
-// 	if err != nil {
-// 		log.Println("exec failed:", err)
-// 		return
-// 	}
-
-// 	idAff, err := rs.RowsAffected()
-// 	if err != nil {
-// 		log.Println("RowsAffected failed:", err)
-// 		return
-// 	}
-// 	log.Println("id:", idAff)
-// 	if idAff == 0 {
-// 		_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", nounce_db)
-// 		if err != nil {
-// 			log.Println("exec failed:", err)
-// 		}
-// 	}
-// 	log.Println("success")
-// }
