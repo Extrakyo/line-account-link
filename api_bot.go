@@ -70,7 +70,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				switch {
-				case strings.EqualFold(message.Text, "1"):
+				case strings.EqualFold(message.Text, "link"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
@@ -101,18 +101,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
+				results, err := db.Query("SELECT userId FROM linebot WHERE `username` = 'extra'")
+				if err != nil {
+					panic(err.Error())
+				}
+
+				err = results.Scan(&userID)
+				if err != nil {
+					panic(err.Error())
+				}
+				var usr LinkCustomer
 				//Check user if it is linked.
-				for _, usr := range linkedCustomers {
-
-					results, err := db.Query("SELECT userId FROM linebot WHERE `username` = 'extra'")
-					if err != nil {
-						panic(err.Error())
-					}
-
-					err = results.Scan(&userID)
-					if err != nil {
-						panic(err.Error())
-					}
+				for results.Next() {
 
 					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
