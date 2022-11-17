@@ -81,7 +81,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			log.Println("id:", idAff)
 			if idAff == 0 {
-				_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", user.Nounce)
+				_, err := db.Exec("INSERT INTO `linebot`(‵username`, `password`, `nounce`) VALUES (?)", user.Username, user.Password, user.Nounce)
 				if err != nil {
 					log.Println("exec failed:", err)
 				}
