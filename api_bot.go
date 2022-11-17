@@ -20,6 +20,7 @@ type LinkCustomer struct {
 }
 
 var linkedCustomers []LinkCustomer
+var usr LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
@@ -101,23 +102,23 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				results, err := db.Query("SELECT userId FROM linebot WHERE `username` = 'extra'")
+				results, err := db.Query("SELECT `nounce`, `userId` FROM `linebot` WHERE `username` = 'extra'")
 				if err != nil {
 					panic(err.Error())
 				}
 
-				err = results.Scan(&userID)
+				var usr LinkCustomer
+				err = results.Scan(&usr.Nounce, usr.UserID)
 				if err != nil {
 					panic(err.Error())
 				}
-				var usr LinkCustomer
+
 				//Check user if it is linked.
 				for results.Next() {
-
 					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+usr.Name+"!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
