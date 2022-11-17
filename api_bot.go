@@ -20,10 +20,29 @@ type LinkCustomer struct {
 }
 
 var linkedCustomers []LinkCustomer
-var usr LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
+
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for results.Next() {
+		// var user Tag
+		var usr LinkCustomer
+		err = results.Scan(&usr.Nounce, &usr.UserID)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
 
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
@@ -71,7 +90,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				switch {
-				case strings.EqualFold(message.Text, "link"):
+				case strings.EqualFold(message.Text, "1"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
@@ -102,23 +121,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				results, err := db.Query("SELECT `nounce`, `userId` FROM `linebot` WHERE `username` = 'extra'")
-				if err != nil {
-					panic(err.Error())
-				}
-
-				var usr LinkCustomer
-				err = results.Scan(&usr.Nounce, usr.UserID)
-				if err != nil {
-					panic(err.Error())
-				}
-
 				//Check user if it is linked.
-				for results.Next() {
+				for _, usr := range linkedCustomers {
 					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("你好 "+usr.Name+"!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
