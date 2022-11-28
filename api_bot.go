@@ -150,8 +150,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				for results.Next() {
-					var user LinkCustomer
-					err = results.Scan(&user.Nounce, &user.UserID)
+					var usr LinkCustomer
+					err = results.Scan(&usr.Nounce, &usr.UserID)
 				}
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
