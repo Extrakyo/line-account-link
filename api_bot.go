@@ -144,21 +144,31 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 			//search from all user using nounce.
 			for _, usr := range tags {
+				results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
+				if err != nil {
+					panic(err.Error())
+				}
+
+				for results.Next() {
+					var user LinkCustomer
+					err = results.Scan(&user.Nounce, &user.UserID)
+				}
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 
 					//Append to linked DB.
-					linkedUser := LinkCustomer{
-						Name:   usr.Username,
-						UserID: event.Source.UserID,
-					}
 
-					linkedCustomers = append(linkedCustomers, linkedUser)
+					// linkedUser := LinkCustomer{
+					// 	Name:   usr.Username,
+					// 	UserID: event.Source.UserID,
+					// }
+
+					// linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.Username+" your account already linked to this chatbot.")).Do(); err != nil {
+						linebot.NewTextMessage("Hi your account already linked to this chatbot.")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
