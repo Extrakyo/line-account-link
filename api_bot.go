@@ -13,16 +13,36 @@ import (
 // LinkCustomer : A chatbot DB to store account link information.
 type LinkCustomer struct {
 	//Data from CustData from provider.
-	Username   string
-	Password   string
-	Nounce     string
-	LinkUserID string
+	Name   string
+	Nounce string
+	//For chatbot linked data.
+	UserID string
 }
 
 var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
+
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for results.Next() {
+		// var user Tag
+		var usr LinkCustomer
+		err = results.Scan(&usr.Nounce, &usr.UserID)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
 
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
@@ -40,12 +60,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
+
 					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
 					if err != nil {
 						panic(err.Error())
 					}
 					defer db.Close()
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = extra", userID)
+
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", userID)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
@@ -64,6 +86,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 					log.Println("success")
+
 				}
 
 				switch {
@@ -73,16 +96,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//2. The LINE Platform returns the link token to the bot server.
 					res, err := bot.IssueLinkToken(userID).Do()
 					if err != nil {
-						log.Println("Issue link token error, err=", err)
+						log.Println("發出連結錯誤, err=", err)
 					}
 
-					log.Println("Get user token:", res.LinkToken)
+					log.Println("獲取使用者令牌:", res.LinkToken)
 
 					//3. The bot server calls the Messaging API to send a linking URL to the user.
 					//4. The LINE Platform sends a linking URL to the user.
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+						linebot.NewTextMessage("會員帳號登入: 連結= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
@@ -100,10 +123,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
-					if usr.LinkUserID == event.Source.UserID {
+					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("Hi "+usr.Username+"!, Nice to see you. \nWe know you: "+" \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("你好 "+usr.Name+"!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
@@ -134,7 +157,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
-				if event.Source.UserID == user.LinkUserID {
+				if event.Source.UserID == user.UserID {
 					log.Println("User:", user, " already linked account.")
 					return
 				}
@@ -144,10 +167,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			for _, usr := range tags {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
+
 					//Append to linked DB.
 					linkedUser := LinkCustomer{
-						Username:   usr.Username,
-						LinkUserID: event.Source.UserID,
+						Name:   usr.Username,
+						UserID: event.Source.UserID,
 					}
 
 					linkedCustomers = append(linkedCustomers, linkedUser)
