@@ -23,27 +23,6 @@ var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
-
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
-	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	for results.Next() {
-		// var user Tag
-		var usr LinkCustomer
-		err = results.Scan(&usr.Nounce, &usr.UserID)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
-
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)
@@ -86,6 +65,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 					log.Println("success")
+
+					results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
+					if err != nil {
+						panic(err.Error())
+					}
+
+					for results.Next() {
+						var user LinkCustomer
+						err = results.Scan(&user.Nounce, &user.UserID)
+					}
 
 				}
 
