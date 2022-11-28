@@ -99,9 +99,26 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					return
 				}
+				results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
+				if err != nil {
+					panic(err.Error())
+				}
 
+				for results.Next() {
+					var usr LinkCustomer
+					err = results.Scan(&usr.Nounce, &usr.UserID)
+				}
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
+					results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
+					if err != nil {
+						panic(err.Error())
+					}
+
+					for results.Next() {
+						var usr LinkCustomer
+						err = results.Scan(&usr.Nounce, &usr.UserID)
+					}
 					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
@@ -144,15 +161,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 			//search from all user using nounce.
 			for _, usr := range tags {
-				results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
-				if err != nil {
-					panic(err.Error())
-				}
 
-				for results.Next() {
-					var usr LinkCustomer
-					err = results.Scan(&usr.Nounce, &usr.UserID)
-				}
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 
