@@ -110,19 +110,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
-					results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
-					if err != nil {
-						panic(err.Error())
-					}
-
-					for results.Next() {
-						var usr LinkCustomer
-						err = results.Scan(&usr.Nounce, &usr.UserID)
-					}
 					if usr.UserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+usr.Name+"!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("你好!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
