@@ -66,16 +66,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println("success")
 
-					results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
-					if err != nil {
-						panic(err.Error())
-					}
-
-					for results.Next() {
-						var user LinkCustomer
-						err = results.Scan(&user.Nounce, &user.UserID)
-					}
-
 				}
 
 				switch {
