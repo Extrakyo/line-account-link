@@ -31,7 +31,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	results, err := db.Query("SELECT nounce FROM linebot WHERE username = 'extra'")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -39,7 +39,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	for results.Next() {
 		// var user Tag
 		var user LinkCustomer
-		err = results.Scan(&user.Username, &user.Password)
+		err = results.Scan(&user.Nounce)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -59,26 +59,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case *linebot.TextMessage:
 					if event.Source != nil {
 						user.UserID = event.Source.UserID
-
-						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", user.UserID, user.Username)
-						if err != nil {
-							log.Println("exec failed:", err)
-							return
-						}
-
-						idAff, err := rs.RowsAffected()
-						if err != nil {
-							log.Println("RowsAffected failed:", err)
-							return
-						}
-						log.Println("id:", idAff)
-						if idAff == 0 {
-							_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", user.UserID)
-							if err != nil {
-								log.Println("exec failed:", err)
-							}
-						}
-						log.Println("success")
 
 					}
 
@@ -162,11 +142,27 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if usr.Nounce == event.AccountLink.Nonce {
 
 						//Append to linked DB.
-						linkedUser := LinkCustomer{
-							UserID: event.Source.UserID,
+						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = extra", user.UserID)
+						if err != nil {
+							log.Println("exec failed:", err)
+							return
 						}
 
-						linkedCustomers = append(linkedCustomers, linkedUser)
+						idAff, err := rs.RowsAffected()
+						if err != nil {
+							log.Println("RowsAffected failed:", err)
+							return
+						}
+						log.Println("id:", idAff)
+						if idAff == 0 {
+							_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", user.UserID)
+							if err != nil {
+								log.Println("exec failed:", err)
+							}
+						}
+						log.Println("success")
+
+						// linkedCustomers = append(linkedCustomers, linkedUser)
 
 						//Send message back to user
 						if _, err = bot.ReplyMessage(
