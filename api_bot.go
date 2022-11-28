@@ -33,12 +33,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
 			switch message := event.Message.(type) {
@@ -46,6 +40,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
 					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = extra", userID)
 					if err != nil {
 						log.Println("exec failed:", err)
@@ -68,7 +67,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				switch {
-				case strings.EqualFold(message.Text, "link"):
+				case strings.EqualFold(message.Text, "1"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
