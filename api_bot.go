@@ -57,15 +57,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					var userID string
 					if event.Source != nil {
-						userID = event.Source.UserID
-
-						db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-						if err != nil {
-							panic(err.Error())
-						}
-						defer db.Close()
+						user.UserID = event.Source.UserID
 
 						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", user.UserID, user.Username)
 						if err != nil {
@@ -94,7 +87,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						//token link
 						//1. The bot server calls the API that issues a link token from the LINE user ID.
 						//2. The LINE Platform returns the link token to the bot server.
-						res, err := bot.IssueLinkToken(userID).Do()
+						res, err := bot.IssueLinkToken(user.UserID).Do()
 						if err != nil {
 							log.Println("發出連結錯誤, err=", err)
 						}
