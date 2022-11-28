@@ -17,6 +17,8 @@ type LinkCustomer struct {
 	Nounce string
 	//For chatbot linked data.
 	UserID string
+	userId string
+	nounce string
 }
 
 var linkedCustomers []LinkCustomer
@@ -99,6 +101,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					return
 				}
+
+				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+				if err != nil {
+					panic(err.Error())
+				}
+				defer db.Close()
+
 				results, err := db.Query("SELECT nounce, userId FROM users WHERE username = 'extra'")
 				if err != nil {
 					panic(err.Error())
@@ -107,17 +116,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				for results.Next() {
 					var usr LinkCustomer
 					err = results.Scan(&usr.Nounce, &usr.UserID)
-				}
-				//Check user if it is linked.
-				for _, usr := range linkedCustomers {
-					if usr.UserID == event.Source.UserID {
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("你好!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
-							log.Println("err:", err)
+					//Check user if it is linked.
+					for _, usr := range linkedCustomers {
+						if usr.UserID == event.Source.UserID {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("你好!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
 							return
 						}
-						return
 					}
 				}
 
