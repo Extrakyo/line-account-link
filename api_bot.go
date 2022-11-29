@@ -82,7 +82,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("訂單歷史= "+user.fullName+user.mobile+user.sumPrice+user.orderStatus)).Do(); err != nil {
+							linebot.NewTextMessage("訂單歷史= \n訂單者："+user.fullName)).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
