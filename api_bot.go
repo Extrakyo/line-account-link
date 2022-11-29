@@ -73,16 +73,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					defer db.Close()
 
-					results, err := db.Query("SELECT `fullName`, `mobile`, `sumPrice`, `orderStatus` FROM orderList WHERE username = 'extra'")
+					results, err := db.Query("SELECT `orderId`, `sumPrice` FROM orderList WHERE username = 'extra'")
 					var user CustData
 					for results.Next() {
-						err = results.Scan(&user.fullName, &user.mobile, &user.sumPrice, &user.orderStatus)
+						err = results.Scan(&user.orderId, &user.sumPrice)
 						if err != nil {
 							panic(err.Error())
 						}
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("訂單歷史= \n訂單者："+user.fullName+"\n金額："+user.sumPrice)).Do(); err != nil {
+							linebot.NewTextMessage("訂單\n訂單瑪："+user.orderId+"\n金額："+user.sumPrice)).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
