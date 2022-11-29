@@ -19,8 +19,6 @@ type LinkCustomer struct {
 	Nounce string
 	//For chatbot linked data.
 	LinkUserID string
-	ddd        string
-	dddd       string
 }
 
 var linkedCustomers []LinkCustomer
@@ -87,7 +85,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage(user.ddd)).Do(); err != nil {
+						linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}

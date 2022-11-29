@@ -1,11 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	b64 "encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // CustData : Customers data for provider website.
@@ -16,22 +19,44 @@ type CustData struct {
 	Age    int
 	Desc   string
 	Nounce string
+	dddd   string
+	ddd    string
 }
 
 var customers []CustData
 
 func init() {
 	//Init customer data in memory
+
 	customers = append(customers, []CustData{
-		CustData{ID: "extra", PW: "Extra123@", Name: "Extra", Age: 22, Desc: "He is from A corp. likes to read comic books."},
+		CustData{ID: "extra", PW: "Extra123@", Name: "Tom", Age: 18, Desc: "He is from A corp. likes to read comic books."},
+		CustData{ID: "22", PW: "pw22", Name: "John", Age: 25, Desc: "He is from B corp. likes to read news paper"},
+		CustData{ID: "33", PW: "pw33", Name: "Mary", Age: 13, Desc: "She is a student, like to read science books"},
 	}...)
+
 }
 
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
+
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	var user CustData
+	for results.Next() {
+		err = results.Scan(&user.ddd, &user.dddd)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
 	for i, usr := range customers {
-		fmt.Fprintf(w, "%d \tID: %s \tName: %s \tPW: %s \tDesc:%s \n", i, usr.ID, usr.Name, usr.PW, usr.Desc)
+		fmt.Fprintf(w, "%d \tID: %s \tName: %s \tPW: %s ", i, usr.ID, usr.ddd, usr.dddd)
 	}
 }
 
@@ -91,3 +116,10 @@ func link(w http.ResponseWriter, r *http.Request) {
 func generateNounce(token, name, pw string) string {
 	return b64.StdEncoding.EncodeToString([]byte(token + name + pw))
 }
+
+// func MD5(pw string) string {
+// 	algorithm := md5.New()
+// 	algorithm.Write([]byte(pw))
+// 	return hex.EncodeToString(algorithm.Sum(nil))
+// 	return b64.StdEncoding.EncodeToString([]byte(token + name + pw))
+// }
