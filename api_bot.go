@@ -1,10 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strings"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
@@ -17,6 +19,8 @@ type LinkCustomer struct {
 	Nounce string
 	//For chatbot linked data.
 	LinkUserID string
+	ddd        string
+	dddd       string
 }
 
 var linkedCustomers []LinkCustomer
@@ -64,10 +68,26 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					return
-				case strings.EqualFold(message.Text, "list"):
+				case strings.EqualFold(message.Text, "2"):
+
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
+
+					results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+					var user CustData
+					for results.Next() {
+						err = results.Scan(&user.ddd, &user.dddd)
+						if err != nil {
+							panic(err.Error())
+						}
+					}
+
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
+						linebot.NewTextMessage(user.ddd)).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
