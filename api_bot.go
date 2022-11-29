@@ -72,11 +72,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						panic(err.Error())
 					}
 					defer db.Close()
-
-					results, err := db.Query("SELECT * FROM `orderList` WHERE username = 'extra'")
 					var user CustData
+					results, err := db.Query("SELECT sumPrice FROM orderList WHERE username = ?", user.Name)
+
 					for results.Next() {
-						err = results.Scan(&user.orderId, &user.sumPrice)
+						err = results.Scan(&user.sumPrice)
 						if err != nil {
 							panic(err.Error())
 						}
