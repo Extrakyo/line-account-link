@@ -142,15 +142,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 			}
-
+			var user linkedCustomers 
 			//search from all user using nounce.
-			for _, usr := range tags {
+			for _, user := range tags {
 
-				results, err := db.Query("SELECT `nounce` FROM `linebot` WHERE `username` = 'extra'")
+				results, err := db.Query("SELECT `nounce`, `userId` FROM `linebot` WHERE `username` = 'extra'")
 				if err != nil {
 					panic(err.Error())
 				}
-				err = results.Scan(&user.Nounce)
+				err = results.Scan(&user.Nounce, &user.UserID)
 				if err != nil {
 					panic(err.Error())
 				}
@@ -159,12 +159,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
-				if user.Nounce == event.AccountLink.Nonce {
+				if usr.Nounce == event.AccountLink.Nonce {
 
 					//Append to linked DB.
 
 					linkedUser := LinkCustomer{
-						Name:   usr.Username,
 						UserID: event.Source.UserID,
 					}
 
