@@ -73,7 +73,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					defer db.Close()
 					var user CustData
-					results, err := db.Query("SELECT sumPrice FROM orderList WHERE username = ?", user.Name)
+					results, err := db.Query("SELECT sumPrice FROM orderList WHERE username = extra")
 
 					for results.Next() {
 						err = results.Scan(&user.sumPrice)
