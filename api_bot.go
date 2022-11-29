@@ -73,16 +73,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					defer db.Close()
 
-					results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+					results, err := db.Query("SELECT fullName, mobile, sumPrice, orderStatus FROM orderList WHERE identity = 'customer'")
 					var user CustData
 					for results.Next() {
-						err = results.Scan(&user.ddd, &user.dddd)
+						err = results.Scan(&user.fullName, &user.sumPrice, &user.orderStatus)
 						if err != nil {
 							panic(err.Error())
 						}
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("List all user: link= "+user.ddd)).Do(); err != nil {
+							linebot.NewTextMessage("訂單歷史= "+user.fullName+user.mobile+user.sumPrice)).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
