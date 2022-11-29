@@ -5,15 +5,16 @@ import (
 	"net/http"
 	"strings"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
 // LinkCustomer : A chatbot DB to store account link information.
 type LinkCustomer struct {
 	//Data from CustData from provider.
-	Username string
-	Nounce   string
+	Name   string
+	Age    int
+	Desc   string
+	Nounce string
 	//For chatbot linked data.
 	LinkUserID string
 }
@@ -78,7 +79,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("Hi "+usr.Username+"!, Nice to see you. \nWe know you: "+" \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("Hi "+usr.Name+"!, Nice to see you. \nWe know you: "+usr.Desc+" \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
@@ -116,12 +117,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			//search from all user using nounce.
-			for _, usr := range tags {
+			for _, usr := range customers {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 					linkedUser := LinkCustomer{
-						Username:   usr.Username,
+						Name:       usr.Name,
+						Age:        usr.Age,
+						Desc:       usr.Desc,
 						LinkUserID: event.Source.UserID,
 					}
 
@@ -130,7 +133,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.Username+" your account already linked to this chatbot.")).Do(); err != nil {
+						linebot.NewTextMessage("Hi "+usr.Name+" your account already linked to this chatbot.")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
