@@ -142,41 +142,39 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 			}
-			var user linkedCustomers 
+			var usr linkedCustomers 
 			//search from all user using nounce.
-			for _, user := range tags {
+			for _, usr := range tags {
 
 				results, err := db.Query("SELECT `nounce`, `userId` FROM `linebot` WHERE `username` = 'extra'")
 				if err != nil {
 					panic(err.Error())
 				}
-				err = results.Scan(&user.Nounce, &user.UserID)
+				err = results.Scan(&usr.Nounce, &usr.UserID)
 				if err != nil {
 					panic(err.Error())
 				}
+				for results.Next() {
+					//12. The bot server uses the nonce to acquire the user ID of the provider's service.
+					if usr.Nounce == event.AccountLink.Nonce {
 
+						//Append to linked DB.
 
+						linkedUser := LinkCustomer{
+							UserID: event.Source.UserID,
+						}
 
+						linkedCustomers = append(linkedCustomers, linkedUser)
 
-				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
-				if usr.Nounce == event.AccountLink.Nonce {
-
-					//Append to linked DB.
-
-					linkedUser := LinkCustomer{
-						UserID: event.Source.UserID,
-					}
-
-					linkedCustomers = append(linkedCustomers, linkedUser)
-
-					//Send message back to user
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("Hi your account already linked to this chatbot.")).Do(); err != nil {
-						log.Println("err:", err)
+						//Send message back to user
+						if _, err = bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("Hi your account already linked to this chatbot.")).Do(); err != nil {
+							log.Println("err:", err)
+							return
+						}
 						return
 					}
-					return
 				}
 			}
 			log.Println("Error: no such user:", event.Source.UserID, " nounce=", event.AccountLink.Nonce, " for account link.")
