@@ -17,8 +17,7 @@ type LinkCustomer struct {
 	Nounce string
 	//For chatbot linked data.
 	UserID string
-	userId string
-	nounce string
+
 }
 
 var linkedCustomers []LinkCustomer
@@ -147,8 +146,20 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			//search from all user using nounce.
 			for _, usr := range tags {
 
+				results, err := db.Query("SELECT `nounce` FROM `linebot` WHERE `username` = 'extra'")
+				if err != nil {
+					panic(err.Error())
+				}
+				err = results.Scan(&user.Nounce)
+				if err != nil {
+					panic(err.Error())
+				}
+
+
+
+
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
-				if usr.Nounce == event.AccountLink.Nonce {
+				if user.Nounce == event.AccountLink.Nonce {
 
 					//Append to linked DB.
 
