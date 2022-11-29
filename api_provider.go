@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	b64 "encoding/base64"
 	"fmt"
 	"html/template"
@@ -38,21 +37,6 @@ func init() {
 
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
-
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
-	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
-	var user CustData
-	for results.Next() {
-		err = results.Scan(&user.ddd, &user.dddd)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
 
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
 	for i, usr := range customers {

@@ -67,7 +67,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					return
 				case strings.EqualFold(message.Text, "2"):
-
 					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
 					if err != nil {
 						panic(err.Error())
@@ -81,15 +80,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							panic(err.Error())
 						}
-					}
-
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
-						log.Println("err:", err)
+						if _, err = bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
+							log.Println("err:", err)
+							return
+						}
 						return
 					}
-					return
+
 				}
 
 				//Check user if it is linked.
