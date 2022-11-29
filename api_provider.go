@@ -12,16 +12,14 @@ import (
 
 // CustData : Customers data for provider website.
 type CustData struct {
-	ID          string
-	PW          string
-	Name        string
-	Age         int
-	Desc        string
-	Nounce      string
-	fullName    string
-	sumPrice    string
-	mobile      string
-	orderStatus string
+	ID       string
+	PW       string
+	Name     string
+	Age      int
+	Desc     string
+	Nounce   string
+	orderId  string
+	sumPrice string
 }
 
 var customers []CustData
