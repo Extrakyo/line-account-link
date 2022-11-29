@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 	"strings"
@@ -13,17 +12,17 @@ import (
 // LinkCustomer : A chatbot DB to store account link information.
 type LinkCustomer struct {
 	//Data from CustData from provider.
-	Name   string
-	Nounce string
+	Username string
+	Nounce   string
 	//For chatbot linked data.
-	UserID string
-
+	LinkUserID string
 }
 
 var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
+
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)
@@ -40,52 +39,25 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
-
-					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-					if err != nil {
-						panic(err.Error())
-					}
-					defer db.Close()
-
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", userID)
-					if err != nil {
-						log.Println("exec failed:", err)
-						return
-					}
-
-					idAff, err := rs.RowsAffected()
-					if err != nil {
-						log.Println("RowsAffected failed:", err)
-						return
-					}
-					log.Println("id:", idAff)
-					if idAff == 0 {
-						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", userID)
-						if err != nil {
-							log.Println("exec failed:", err)
-						}
-					}
-					log.Println("success")
-
 				}
 
 				switch {
-				case strings.EqualFold(message.Text, "1"):
+				case strings.EqualFold(message.Text, "link"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
 					res, err := bot.IssueLinkToken(userID).Do()
 					if err != nil {
-						log.Println("發出連結錯誤, err=", err)
+						log.Println("Issue link token error, err=", err)
 					}
 
-					log.Println("獲取使用者令牌:", res.LinkToken)
+					log.Println("Get user token:", res.LinkToken)
 
 					//3. The bot server calls the Messaging API to send a linking URL to the user.
 					//4. The LINE Platform sends a linking URL to the user.
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("會員帳號登入: 連結= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+						linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
@@ -103,10 +75,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
-					if usr.UserID == event.Source.UserID {
+					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好!, Nice to see you. \nWe know you:  \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("Hi "+usr.Username+"!, Nice to see you. \nWe know you: "+" \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
@@ -137,44 +109,32 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
-				if event.Source.UserID == user.UserID {
+				if event.Source.UserID == user.LinkUserID {
 					log.Println("User:", user, " already linked account.")
 					return
 				}
 			}
-			var usr linkedCustomers 
+
 			//search from all user using nounce.
 			for _, usr := range tags {
+				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
+				if usr.Nounce == event.AccountLink.Nonce {
+					//Append to linked DB.
+					linkedUser := LinkCustomer{
+						Username:   usr.Username,
+						LinkUserID: event.Source.UserID,
+					}
 
-				results, err := db.Query("SELECT `nounce`, `userId` FROM `linebot` WHERE `username` = 'extra'")
-				if err != nil {
-					panic(err.Error())
-				}
-				err = results.Scan(&usr.Nounce, &usr.UserID)
-				if err != nil {
-					panic(err.Error())
-				}
-				for results.Next() {
-					//12. The bot server uses the nonce to acquire the user ID of the provider's service.
-					if usr.Nounce == event.AccountLink.Nonce {
+					linkedCustomers = append(linkedCustomers, linkedUser)
 
-						//Append to linked DB.
-
-						linkedUser := LinkCustomer{
-							UserID: event.Source.UserID,
-						}
-
-						linkedCustomers = append(linkedCustomers, linkedUser)
-
-						//Send message back to user
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("Hi your account already linked to this chatbot.")).Do(); err != nil {
-							log.Println("err:", err)
-							return
-						}
+					//Send message back to user
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("Hi "+usr.Username+" your account already linked to this chatbot.")).Do(); err != nil {
+						log.Println("err:", err)
 						return
 					}
+					return
 				}
 			}
 			log.Println("Error: no such user:", event.Source.UserID, " nounce=", event.AccountLink.Nonce, " for account link.")
