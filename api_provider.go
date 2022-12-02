@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"encoding/hex"
-	b64 "encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
@@ -40,11 +39,10 @@ func init() {
 	}  
 	//定义对象数组,用于接收数据  
 	var docList []Doctor  
-	for rows.Next() {  
-		var doc Doctor  
-		rows.Scan(&doc.ID, &doc.PW)
+	for rows.Next() {   
+		rows.Scan(&customers.ID, &customers.PW)
 		//加入数组  
-		docList = append(docList, doc)
+		docList = append(docList, customers)
 		  
 	}  
 	fmt.Println("查询结果", docList)
