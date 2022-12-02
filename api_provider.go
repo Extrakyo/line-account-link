@@ -78,7 +78,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 					log.Println("exec failed:", err)
 					return
 				}
-	
+
 				idAff, err := rs.RowsAffected()
 				if err != nil {
 					log.Println("RowsAffected failed:", err)
@@ -89,6 +89,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 					_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", user.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
+					}
+				}
 
 				//9. The web server redirects the user to the account-linking endpoint.
 				//10. The user accesses the account-linking endpoint.
