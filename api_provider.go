@@ -73,7 +73,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 				//update nounce to provider DB to store it.
 				customers[i].Nounce = sNonce
-				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = 'extra'", sNonce)
+				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, usr.ID)
 				if err != nil {
 					log.Println("exec failed:", err)
 					return
