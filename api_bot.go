@@ -65,14 +65,29 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					return
-				case strings.EqualFold(message.Text, "list"):
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
-						log.Println("err:", err)
+				case strings.EqualFold(message.Text, "2"):
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
+					var user CustData
+					results, err := db.Query("SELECT `sumPrice` FROM `orderList` WHERE `username` = ?", user.Name)
+
+					for results.Next() {
+						err = results.Scan(&user.sumPrice)
+						if err != nil {
+							panic(err.Error())
+						}
+						if _, err = bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("金額："+user.sumPrice)).Do(); err != nil {
+							log.Println("err:", err)
+							return
+						}
 						return
 					}
-					return
+
 				}
 
 				//Check user if it is linked.
