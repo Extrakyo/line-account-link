@@ -40,11 +40,11 @@ func init() {
 	}  
 	//定义对象数组,用于接收数据  
 	var docList []Doctor  
-	for rows2.Next() {  
+	for rows.Next() {  
 		var doc Doctor  
-		rows2.Scan(&doc.ID, &doc.PW)
+		rows.Scan(&doc.ID, &doc.PW)
 		//加入数组  
-		docList = append(docList, doc2)
+		docList = append(docList, doc)
 		  
 	}  
 	fmt.Println("查询结果", docList)
