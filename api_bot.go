@@ -13,8 +13,6 @@ import (
 type LinkCustomer struct {
 	//Data from CustData from provider.
 	Name   string
-	Age    int
-	Desc   string
 	Nounce string
 	//For chatbot linked data.
 	LinkUserID string
@@ -140,8 +138,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					linkedUser := LinkCustomer{
 						Name:       usr.Name,
-						Age:        usr.Age,
-						Desc:       usr.Desc,
 						LinkUserID: event.Source.UserID,
 					}
 

@@ -33,7 +33,7 @@ func init() {
 	}  
 	//延迟到函数结束关闭链接  
 	defer db.Close()
-	rows, err := db.Query("select * from doctor_tb where age > ?", 18)  
+	rows, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
 	if err != nil {  
 	fmt.Println("error", err)  
 	return  
