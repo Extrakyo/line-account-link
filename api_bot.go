@@ -113,31 +113,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 
-					// linkedUser := LinkCustomer{
-					// 	Name:       usr.Name,
-					// 	LinkUserID: event.Source.UserID,
-					// }
-					var user LinkCustomer
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", event.Source.UserID)
+					_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
 					if err != nil {
 						log.Println("exec failed:", err)
-						return
 					}
 
-					idAff, err := rs.RowsAffected()
-					if err != nil {
-						log.Println("RowsAffected failed:", err)
-						return
-					}
-					log.Println("id:", idAff)
-					if idAff == 0 {
-						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
-						if err != nil {
-							log.Println("exec failed:", err)
-						}
+					linkedUser := LinkCustomer{
+
+						LinkUserID: event.Source.UserID,
 					}
 
-					linkedCustomers = append(linkedCustomers, user)
+					linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
