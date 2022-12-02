@@ -113,11 +113,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 
-					_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
-					if err != nil {
-						log.Println("exec failed:", err)
-					}
-
 					linkedUser := LinkCustomer{
 
 						LinkUserID: event.Source.UserID,
