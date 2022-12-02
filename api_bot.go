@@ -125,7 +125,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						panic(err.Error())
 					}
 					defer db.Close()
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", event.Source.UserID)
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
@@ -143,7 +143,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							log.Println("exec failed:", err)
 						}
 					}
-					results, err := db.Query("SELECT userId FROM linebot WHERE username = 'extra'")
+					results, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
