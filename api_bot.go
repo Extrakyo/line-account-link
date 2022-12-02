@@ -73,7 +73,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("Hi "+usr.Name+"!, Nice to see you. \nWe know you: "+" \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("你好 "+usr.Name+"!, 可以使用功能了!")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
@@ -85,7 +85,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				if _, err = bot.ReplyMessage(
 					event.ReplyToken,
-					linebot.NewTextMessage("Welcome to booksstore, currently your account is not linked to provider. \nThis is a starter for account link, check following actions.").
+					linebot.NewTextMessage("歡迎使用Foodler bot ，還未綁定，請驗證").
 						WithQuickReplies(linebot.NewQuickReplyItems(
 							linebot.NewQuickReplyButton(
 								"",
@@ -159,7 +159,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.Name+" your account already linked to this chatbot.")).Do(); err != nil {
+						linebot.NewTextMessage("Hi "+usr.Name+" 你的Foodler帳號已成功連結")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
