@@ -73,20 +73,20 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 				//update nounce to provider DB to store it.
 				customers[i].Nounce = sNonce
-				// rs, err := db.Exec("UPDATE `linebot` SET `nounce = ? WHERE = `username` = ?", sNonce, user)
-				// if err != nil {
-				// 	return
-				// }
-				// idAff, err := rs.RowsAffected()
-				// if err != nil {
-				// 	return
-				// }
-				// if idAff == 0 {
-				// 	_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", sNonce)
-				// 	if err != nil {
-				// 		log.Println("exec failed", err)
-				// 	}
-				// }
+				rs, err := db.Exec("UPDATE `linebot` SET `nounce = ? WHERE = `username` = 'extra'", sNonce)
+				if err != nil {
+					return
+				}
+				idAff, err := rs.RowsAffected()
+				if err != nil {
+					return
+				}
+				if idAff == 0 {
+					_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", sNonce)
+					if err != nil {
+						log.Println("exec failed", err)
+					}
+				}
 
 				//9. The web server redirects the user to the account-linking endpoint.
 				//10. The user accesses the account-linking endpoint.
