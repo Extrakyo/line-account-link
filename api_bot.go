@@ -67,18 +67,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 
 				case strings.EqualFold(message.Text, "Unlink"):
+					for _, usr := range linkedCustomers {
+						usr.LinkUserID = ""
+						usr.Nounce = ""
+					}
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
 						linebot.NewTextMessage("取消綁定")).Do(); err != nil {
 						log.Println("err:", err)
-						for _, usr := range linkedCustomers {
-							usr.LinkUserID = ""
-							usr.Nounce = ""
-							if err != nil {
-								log.Println("exec failed:", err)
-								return
-							}
-						}
 
 					}
 					return
