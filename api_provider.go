@@ -45,14 +45,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	results, err := db.Query("SELECT username, password, fname FROM users WHERE identity = 'customer'")
 	if err != nil {
 		panic(err.Error())
 	}
 
 	var user CustData
 	for results.Next() {
-		results.Scan(&user.ID, &user.PW)
+		results.Scan(&user.ID, &user.PW, &user.Name)
 		customers = append(customers, user)
 	}
 	//7. The user enters his/her credentials.
