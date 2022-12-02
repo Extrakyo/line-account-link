@@ -72,19 +72,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("取消綁定")).Do(); err != nil {
 						log.Println("err:", err)
-						db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-						if err != nil {
-							panic(err.Error())
+						for _, usr := range linkedCustomers {
+							usr.LinkUserID = ""
+							usr.Nounce = ""
 						}
-						defer db.Close()
-						result3, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", userID)
-						if err != nil {
-							log.Println("error", err)
-							return
-						}
-						i3, _ := result3.RowsAffected()
-						log.Printf("受影响行数：%d \n", i3)
-						return
 
 					}
 					return
