@@ -38,10 +38,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
-					_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", userID)
-					if err != nil {
-						return
-					}
 
 				}
 
