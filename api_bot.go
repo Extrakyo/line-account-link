@@ -66,6 +66,29 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					return
 
+				case strings.EqualFold(message.Text, "Unlink"):
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
+					result3, err := db.Exec("DELETE FROM `linebot` WHERE `userId`")
+					if err != nil {
+						log.Println("error", err)
+						return
+					}
+					i3, _ := result3.RowsAffected()
+					log.Printf("受影响行数：%d \n", i3)
+
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("取消綁定")).Do(); err != nil {
+						log.Println("err:", err)
+
+						return
+
+					}
+					return
 				}
 
 				//Check user if it is linked.
@@ -73,7 +96,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+usr.Name+"!, 可以使用功能了!")).Do(); err != nil {
+							linebot.NewTextMessage("你好 "+usr.Name+"，可以使用功能了!")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
