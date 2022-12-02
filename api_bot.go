@@ -117,6 +117,24 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						Name:       usr.Name,
 						LinkUserID: event.Source.UserID,
 					}
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", linkedUser.LinkUserID, linkedUser.Nounce)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
+					}
+
+					idAff, err := rs.RowsAffected()
+					if err != nil {
+						log.Println("RowsAffected failed:", err)
+						return
+					}
+					log.Println("id:", idAff)
+					if idAff == 0 {
+						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", linkedUser.LinkUserID)
+						if err != nil {
+							log.Println("exec failed:", err)
+						}
+					}
 
 					linkedCustomers = append(linkedCustomers, linkedUser)
 
