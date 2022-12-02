@@ -114,12 +114,40 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 
-					linkedUser := LinkCustomer{
+					// linkedUser := LinkCustomer{
 
-						LinkUserID: event.Source.UserID,
+					// 	LinkUserID: event.Source.UserID,
+					// }
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", event.Source.UserID)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
 					}
 
-					linkedCustomers = append(linkedCustomers, linkedUser)
+					idAff, err := rs.RowsAffected()
+					if err != nil {
+						log.Println("RowsAffected failed:", err)
+						return
+					}
+					log.Println("id:", idAff)
+					if idAff == 0 {
+						_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", event.Source.UserID)
+						if err != nil {
+							log.Println("exec failed:", err)
+						}
+					}
+					results, err := db.Query("SELECT userId FROM linebot WHERE username = 'extra'")
+					if err != nil {
+						panic(err.Error())
+					}
+
+					var linkedUser LinkCustomer
+					for results.Next() {
+						results.Scan(&linkedUser.LinkUserID)
+						linkedCustomers = append(linkedCustomers, linkedUser)
+					}
+
+					// linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
