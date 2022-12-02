@@ -1,10 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strings"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
@@ -38,6 +40,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
 					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", userID)
 					if err != nil {
 						log.Println("exec failed:", err)
