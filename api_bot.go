@@ -38,6 +38,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
+
 				}
 
 				switch {
@@ -117,7 +118,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 						LinkUserID: event.Source.UserID,
 					}
-
+					_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", linkedUser.LinkUserID)
+					if err != nil {
+						log.Println("exec failed:", err)
+					}
 					linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
