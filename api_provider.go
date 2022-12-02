@@ -73,7 +73,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 				//update nounce to provider DB to store it.
 				customers[i].Nounce = sNonce
-				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", user.Nounce, user.ID)
+				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = 'extra'", sNonce)
 				if err != nil {
 					log.Println("exec failed:", err)
 					return
@@ -86,7 +86,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				}
 				log.Println("id:", idAff)
 				if idAff == 0 {
-					_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", user.Nounce)
+					_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", sNonce)
 					if err != nil {
 						log.Println("exec failed:", err)
 					}
