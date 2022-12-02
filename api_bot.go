@@ -73,8 +73,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						linebot.NewTextMessage("取消綁定")).Do(); err != nil {
 						log.Println("err:", err)
 						for _, usr := range linkedCustomers {
+							_, err := db.Exec("DELETE FROM linebot WHERE userId = ?", usr.LinkUserID)
 							usr.LinkUserID = ""
 							usr.Nounce = ""
+							if err != nil {
+								log.Println("exec failed:", err)
+								return
+							}
 						}
 
 					}
