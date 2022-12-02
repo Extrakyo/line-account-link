@@ -40,29 +40,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
-					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-					if err != nil {
-						panic(err.Error())
-					}
-					defer db.Close()
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", userID)
-					if err != nil {
-						log.Println("exec failed:", err)
-						return
-					}
-
-					idAff, err := rs.RowsAffected()
-					if err != nil {
-						log.Println("RowsAffected failed:", err)
-						return
-					}
-					log.Println("id:", idAff)
-					if idAff == 0 {
-						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", userID)
-						if err != nil {
-							log.Println("exec failed:", err)
-						}
-					}
 
 				}
 
@@ -143,7 +120,29 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					// 	LinkUserID: event.Source.UserID,
 					// }
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", event.Source.UserID)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
+					}
 
+					idAff, err := rs.RowsAffected()
+					if err != nil {
+						log.Println("RowsAffected failed:", err)
+						return
+					}
+					log.Println("id:", idAff)
+					if idAff == 0 {
+						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
+						if err != nil {
+							log.Println("exec failed:", err)
+						}
+					}
 					results, err := db.Query("SELECT userId FROM linebot WHERE username = 'extra'")
 					if err != nil {
 						panic(err.Error())
