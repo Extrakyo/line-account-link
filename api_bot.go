@@ -118,7 +118,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 						LinkUserID: event.Source.UserID,
 					}
-					_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", linkedUser.LinkUserID)
+					_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", linkedUser.LinkUserID)
 					if err != nil {
 						log.Println("exec failed:", err)
 					}
