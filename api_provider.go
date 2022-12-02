@@ -30,6 +30,10 @@ func init() {
 
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
+	for i, usr := range customers {
+		fmt.Fprintf(w, "%d \tID: %s \tName: %s \n", i, usr.ID, usr.Name)
+	}
 }
 
 // WEB: For login (just for demo)
@@ -83,10 +87,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	fmt.Fprintf(w, "Your input name or password error.")
 }
 
-// WEB: For account link
 func link(w http.ResponseWriter, r *http.Request) {
 	//5. The user accesses the linking URL.
 	TOKEN := r.FormValue("linkToken")

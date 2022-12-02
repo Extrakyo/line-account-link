@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 	"strings"
-
-	_ "github.com/go-sql-driver/mysql"
+	"database/sql"
 	"github.com/line/line-bot-sdk-go/linebot"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-// LinkCustomer : A chatbot DB to store account link information.
+//LinkCustomer : A chatbot DB to store account link information.
 type LinkCustomer struct {
 	//Data from CustData from provider.
 	Name   string
@@ -113,6 +113,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
+
 					linkedUser := LinkCustomer{
 						Name:       usr.Name,
 						LinkUserID: event.Source.UserID,
