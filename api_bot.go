@@ -24,6 +24,12 @@ var linkedCustomers []LinkCustomer
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
 
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)
@@ -65,6 +71,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					return
+
+				case strings.EqualFold(message.Text, "link"):
+
+					for _, usr := range linkedCustomers {
+
+						_, err := db.Exec("DELETE FROM `linebot` WHERE `nounce` = ? `userId` = ?", usr.Nounce, usr.LinkUserID)
+						if err != nil {
+							log.Println("exec failed:", err)
+							return
+
+						}
+					}
 				}
 
 				//Check user if it is linked.
@@ -77,19 +95,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							return
 						}
 						return
-					}
-					if strings.EqualFold(message.Text, "1") {
-						db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-						if err != nil {
-							panic(err.Error())
-						}
-						defer db.Close()
-						dc := usr.LinkUserID
-						dc = ""
-						_, derr := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", dc)
-						if derr != nil {
-							panic(err.Error())
-						}
 					}
 				}
 
@@ -132,11 +137,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					// 	LinkUserID: event.Source.UserID,
 					// }
-					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-					if err != nil {
-						panic(err.Error())
-					}
-					defer db.Close()
+
 					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
 					if err != nil {
 						log.Println("exec failed:", err)
