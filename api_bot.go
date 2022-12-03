@@ -17,6 +17,7 @@ type LinkCustomer struct {
 	Nounce string
 	//For chatbot linked data.
 	LinkUserID string
+	LinkId     string
 }
 
 var linkedCustomers []LinkCustomer
@@ -40,7 +41,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var userID string
 				if event.Source != nil {
 					userID = event.Source.UserID
-
 				}
 
 				switch {
@@ -133,18 +133,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					defer db.Close()
 
-					results, err := db.Query("SELECT `userId`, `Name` FROM linebot WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `userId`, `fname` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
 
 					var linkedUser LinkCustomer
 					for results.Next() {
-						results.Scan(&linkedUser.LinkUserID)
+						results.Scan(&linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
@@ -168,7 +168,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.Name+" 你的Foodler帳號已成功連結")).Do(); err != nil {
+						linebot.NewTextMessage("你好"+usr.Name+"你的Foodler帳號已成功連結")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
