@@ -85,6 +85,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						defer db.Close()
 						dc := usr.LinkUserID
+						dc = ""
 						_, derr := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", dc)
 						if derr != nil {
 							panic(err.Error())
