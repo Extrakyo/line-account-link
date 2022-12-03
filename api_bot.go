@@ -73,24 +73,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 
 				case strings.EqualFold(message.Text, "Unlink"):
+
 					for _, usr := range linkedCustomers {
-						if usr.LinkUserID == event.Source.UserID {
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("你好 "+"取消綁定")).Do(); err != nil {
-								usr.LinkUserID = ""
-								usr.Nounce = ""
-								_, err := db.Exec("UPDATE `linebot` SET `userId`= ? , `nounce` = ? WHERE `username` = 'extra'", usr.LinkUserID, usr.Nounce)
-								if err != nil {
-									log.Println("exec failed:", err)
-									return
-								}
-								log.Println("err:", err)
-								return
-							}
-							return
-						}
+						usr.LinkUserID = ""
+						usr.Nounce = ""
 					}
+
 				}
 
 				//Check user if it is linked.
