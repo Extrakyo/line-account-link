@@ -83,13 +83,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					return
 
-				case strings.EqualFold(message.Text, "Unlink"):
-
-					for _, usr := range linkedCustomers {
-						usr.LinkUserID = ""
-						usr.Nounce = ""
+				case strings.EqualFold(message.Text, "list"):
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
+						log.Println("err:", err)
+						return
 					}
-
+					return
 				}
 
 				//Check user if it is linked.
