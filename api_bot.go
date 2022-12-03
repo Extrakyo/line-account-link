@@ -45,6 +45,29 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				switch {
 				case strings.EqualFold(message.Text, "link"):
+					for _, usr := range linkedCustomers {
+						if usr.Nounce == event.AccountLink.Nonce {
+							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", userID, usr.Nounce)
+							if err != nil {
+								log.Println("exec failed:", err)
+								return
+							}
+
+							idAff, err := rs.RowsAffected()
+							if err != nil {
+								log.Println("RowsAffected failed:", err)
+								return
+							}
+							log.Println("id:", idAff)
+							if idAff == 0 {
+								_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", userID)
+								if err != nil {
+									log.Println("exec failed:", err)
+								}
+							}
+						}
+					}
+
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
@@ -142,25 +165,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					for results.Next() {
 						results.Scan(&linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
-					}
-
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
-					if err != nil {
-						log.Println("exec failed:", err)
-						return
-					}
-
-					idAff, err := rs.RowsAffected()
-					if err != nil {
-						log.Println("RowsAffected failed:", err)
-						return
-					}
-					log.Println("id:", idAff)
-					if idAff == 0 {
-						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
-						if err != nil {
-							log.Println("exec failed:", err)
-						}
 					}
 
 					// linkedCustomers = append(linkedCustomers, linkedUser)
