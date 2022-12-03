@@ -24,23 +24,6 @@ var linkedCustomers []LinkCustomer
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
 
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-	for _, usr := range customers {
-		results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
-		if err != nil {
-			panic(err.Error())
-		}
-
-		var linkedUser LinkCustomer
-		for results.Next() {
-			results.Scan(&linkedUser.LinkUserID)
-			linkedCustomers = append(linkedCustomers, linkedUser)
-		}
-	}
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)
@@ -149,6 +132,21 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					// 	LinkUserID: event.Source.UserID,
 					// }
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
+					results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+					if err != nil {
+						panic(err.Error())
+					}
+
+					var linkedUser LinkCustomer
+					for results.Next() {
+						results.Scan(&linkedUser.LinkUserID)
+						linkedCustomers = append(linkedCustomers, linkedUser)
+					}
 
 					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
 					if err != nil {
