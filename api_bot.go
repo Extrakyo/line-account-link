@@ -70,7 +70,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					for _, usr := range linkedCustomers {
 						usr.LinkUserID = ""
 						usr.Nounce = ""
+						_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", usr.LinkUserID)
+						if err != nil {
+							log.Println("exec failed:", err)
+							return
+						}
 					}
+
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
 						linebot.NewTextMessage("取消綁定")).Do(); err != nil {
