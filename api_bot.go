@@ -83,6 +83,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 						}
 					}
+					return
 				}
 
 				//Check user if it is linked.
