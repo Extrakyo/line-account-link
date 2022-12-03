@@ -84,13 +84,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					return
 
 				case strings.EqualFold(message.Text, "list"):
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
-						log.Println("err:", err)
-						return
+					for _, usr := range linkedCustomers {
+						if usr.LinkUserID == event.Source.UserID {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
+							return
+						}
 					}
-					return
 				}
 
 				//Check user if it is linked.
