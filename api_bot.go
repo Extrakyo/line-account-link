@@ -29,7 +29,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 	defer db.Close()
+	for _, usr := range customers {
+		results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+		if err != nil {
+			panic(err.Error())
+		}
 
+		var linkedUser LinkCustomer
+		for results.Next() {
+			results.Scan(&linkedUser.LinkUserID)
+			linkedCustomers = append(linkedCustomers, linkedUser)
+		}
+	}
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)
@@ -151,16 +162,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							log.Println("exec failed:", err)
 						}
-					}
-					results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
-					if err != nil {
-						panic(err.Error())
-					}
-
-					var linkedUser LinkCustomer
-					for results.Next() {
-						results.Scan(&linkedUser.LinkUserID)
-						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 
 					// linkedCustomers = append(linkedCustomers, linkedUser)
