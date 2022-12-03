@@ -65,27 +65,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					return
-
-				case strings.EqualFold(message.Text, "1"):
-					_, err := bot.IssueLinkToken(userID).Do()
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("取消綁定")).Do(); err != nil {
-						log.Println("err:", err)
-						for _, usr := range linkedCustomers {
-							usr.LinkUserID = ""
-							usr.Nounce = ""
-							userID = ""
-							_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", userID)
-							if err != nil {
-								log.Println("exec failed:", err)
-								return
-							}
-
-						}
-
-					}
-					return
 				}
 
 				//Check user if it is linked.
@@ -98,6 +77,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							return
 						}
 						return
+					}
+					if strings.EqualFold(message.Text, "1") {
+						db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+						if err != nil {
+							panic(err.Error())
+						}
+						defer db.Close()
+						dc := usr.LinkUserID
+						_, derr := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = 'extra'", dc)
+						if derr != nil {
+							panic(err.Error())
+						}
 					}
 				}
 
