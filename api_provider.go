@@ -45,7 +45,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	results, err := db.Query("SELECT username, password, fname FROM users WHERE identity = 'customer'")
+	results, err := db.Query("SELECT `username`, `password`, `fname` FROM `users` WHERE `identity` = 'customer'")
 	if err != nil {
 		panic(err.Error())
 	}

@@ -126,18 +126,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			for _, usr := range customers {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
-					//Append to linked DB.
 
-					// linkedUser := LinkCustomer{
-
-					// 	LinkUserID: event.Source.UserID,
-					// }
 					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
 					if err != nil {
 						panic(err.Error())
 					}
 					defer db.Close()
-					results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+
+					results, err := db.Query("SELECT `userId`, `Name` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
