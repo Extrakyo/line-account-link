@@ -80,8 +80,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "Un"):
 					for _, usr := range linkedCustomers {
-						usr.LinkUserID = ""
-						usr.Nounce = ""
+						usr.LinkUserID = "extra"
+						usr.Nounce = "extra"
 					}
 				}
 
