@@ -127,7 +127,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
