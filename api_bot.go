@@ -83,20 +83,21 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
+							usr.LinkUserID = ""
+							usr.Nounce = ""
 							db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
 							if err != nil {
 								panic(err.Error())
 							}
 							defer db.Close()
 
-							rs, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ? `nounce` = ?", usr.LinkUserID, usr.Nounce)
+							rs, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
 							}
 							log.Println("id:", rs)
-							usr.LinkUserID = ""
-							usr.Nounce = ""
+
 						}
 					}
 				}
