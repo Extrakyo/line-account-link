@@ -90,6 +90,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 					}
 				}
+				results, err := db.Query("SELECT `nounce` FROM `linbot` WHERE `username` = ?", user.ID)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				for results.Next() {
+					results.Scan(&usr.Nounce)
+					customers = append(customers, user)
+				}
 
 				//9. The web server redirects the user to the account-linking endpoint.
 				//10. The user accesses the account-linking endpoint.
