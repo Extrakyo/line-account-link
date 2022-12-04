@@ -34,12 +34,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
 			switch message := event.Message.(type) {
@@ -48,7 +42,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if event.Source != nil {
 					userID = event.Source.UserID
 				}
-
+				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+				if err != nil {
+					panic(err.Error())
+				}
+				defer db.Close()
 				switch {
 				case strings.EqualFold(message.Text, "link"):
 
@@ -88,6 +86,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case strings.EqualFold(message.Text, "Un"):
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
+
 							_, err := db.Exec("DELETE * FROM linebot WHERE userId = ?", usr.LinkUserID)
 							if err != nil {
 								log.Println("exec failed:", err)
@@ -164,7 +163,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 
-					results, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+					results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
