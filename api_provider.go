@@ -95,7 +95,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 					}
 				}
-				results, err := db.Query("SELECT `nounce` FROM `linbot` WHERE `username` = ?", user.ID)
+				results, err := db.Query("SELECT `nounce` FROM `linbot` WHERE `username` = ?", usr.ID)
 				if err != nil {
 					panic(err.Error())
 				}
