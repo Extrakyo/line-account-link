@@ -89,7 +89,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 							defer db.Close()
 
-							rs, err := db.Exec("DELETE * FROM linebot WHERE userId = ?", usr.LinkUserID)
+							rs, err := db.Exec("DELETE FROM linebot WHERE userId = ?", usr.LinkUserID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
@@ -182,6 +182,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					var linkedUser LinkCustomer
 					for results.Next() {
 						results.Scan(&linkedUser.LinkUserID)
+						log.Println(results)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 
