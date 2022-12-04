@@ -82,7 +82,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case strings.EqualFold(message.Text, "Un"):
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
-							DB()
+
 							_, err := db.Exec("DELETE * FROM linebot WHERE userId = ?", usr.LinkUserID)
 							if err != nil {
 								log.Println("exec failed:", err)
@@ -140,7 +140,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 
-					DB()
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
+
 					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
@@ -187,12 +192,4 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("Error: no such user:", event.Source.UserID, " nounce=", event.AccountLink.Nonce, " for account link.")
 		}
 	}
-}
-
-func DB() {
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
 }
