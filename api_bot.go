@@ -33,24 +33,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	for _, usr := range customers {
-
-		db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-		if err != nil {
-			panic(err.Error())
-		}
-		defer db.Close()
-		results, err := db.Query("SELECT `nounce` FROM linebot WHERE `username` = ?", usr.ID)
-		if err != nil {
-			panic(err.Error())
-		}
-
-		var linkedUser LinkCustomer
-		for results.Next() {
-			results.Scan(&linkedUser.Nounce)
-			linkedCustomers = append(linkedCustomers, linkedUser)
-		}
-	}
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {

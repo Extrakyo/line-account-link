@@ -91,6 +91,22 @@ func login(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 					}
 				}
+				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+				if err != nil {
+					panic(err.Error())
+				}
+				defer db.Close()
+
+				results, err := db.Query("SELECT `nounce` FROM linebot WHERE `username` = ?", usr.ID)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				for results.Next() {
+					results.Scan(&user.Nounce)
+					customers = append(customers, user)
+				}
+
 				//9. The web server redirects the user to the account-linking endpoint.
 				//10. The user accesses the account-linking endpoint.
 				//Print link to user to click it.
