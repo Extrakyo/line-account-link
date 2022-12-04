@@ -33,6 +33,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	for _, usr := range customers {
+		results, err := db.Query("SELECT `nounce` FROM linebot WHERE `username` = ?", usr.ID)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		var linkedUser LinkCustomer
+		for results.Next() {
+			results.Scan(&linkedUser.Nounce)
+			linkedCustomers = append(linkedCustomers, linkedUser)
+		}
+	}
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
@@ -175,7 +187,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					var linkedUser LinkCustomer
 					for results.Next() {
 						results.Scan(&linkedUser.LinkUserID)
-						log.Println(results)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 
