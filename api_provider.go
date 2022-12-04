@@ -64,14 +64,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 	pw := r.FormValue("pass")
 	token := r.FormValue("token")
 	PW := MD5(pw)
-	for i, usr := range customers {
+	for _, usr := range customers {
 		if usr.ID == name {
 			if PW == usr.PW {
 				//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 				sNonce := generateNounce(token, name, pw)
 
 				//update nounce to provider DB to store it.
-				customers[i].Nounce = sNonce
+				// customers[i].Nounce = sNonce
 				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, usr.ID)
 				if err != nil {
 					log.Println("exec failed:", err)
