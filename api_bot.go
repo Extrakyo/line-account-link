@@ -42,11 +42,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if event.Source != nil {
 					userID = event.Source.UserID
 				}
-				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-				if err != nil {
-					panic(err.Error())
-				}
-				defer db.Close()
+
 				switch {
 				case strings.EqualFold(message.Text, "link"):
 
@@ -82,7 +78,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							return
 						}
 					}
-
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
 				case strings.EqualFold(message.Text, "Un"):
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
