@@ -95,6 +95,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								return
 							}
 							log.Println("id:", rs)
+							usr.LinkUserID = ""
 						}
 					}
 				}
