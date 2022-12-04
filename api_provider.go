@@ -91,6 +91,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 					}
 				}
+
 				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
 				if err != nil {
 					panic(err.Error())
