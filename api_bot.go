@@ -61,27 +61,27 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
-						return
-					}
-					for _, usr := range customers {
-						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", res, usr.ID)
-						if err != nil {
-							log.Println("exec failed:", err)
-							return
-						}
-
-						idAff, err := rs.RowsAffected()
-						if err != nil {
-							log.Println("RowsAffected failed:", err)
-							return
-						}
-						log.Println("id:", idAff)
-						if idAff == 0 {
-							_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", res)
+						for _, usr := range customers {
+							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", res, usr.ID)
 							if err != nil {
 								log.Println("exec failed:", err)
+								return
+							}
+
+							idAff, err := rs.RowsAffected()
+							if err != nil {
+								log.Println("RowsAffected failed:", err)
+								return
+							}
+							log.Println("id:", idAff)
+							if idAff == 0 {
+								_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", res)
+								if err != nil {
+									log.Println("exec failed:", err)
+								}
 							}
 						}
+						return
 					}
 
 				case strings.EqualFold(message.Text, "list"):
