@@ -160,7 +160,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 
-					results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
