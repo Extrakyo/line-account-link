@@ -73,19 +73,19 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									log.Println("exec failed:", err)
 								}
 							}
-						}
 
-						log.Println("Get user token:", res.LinkToken)
+							log.Println("Get user token:", res.LinkToken)
 
-						//3. The bot server calls the Messaging API to send a linking URL to the user.
-						//4. The LINE Platform sends a linking URL to the user.
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
-							log.Println("err:", err)
+							//3. The bot server calls the Messaging API to send a linking URL to the user.
+							//4. The LINE Platform sends a linking URL to the user.
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
 							return
 						}
-						return
 					}
 
 				case strings.EqualFold(message.Text, "list"):
