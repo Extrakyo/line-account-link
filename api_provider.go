@@ -22,7 +22,6 @@ type CustData struct {
 }
 
 var customers []CustData
-var db *sql.DB
 
 func init() {
 	//Init customer data in memory

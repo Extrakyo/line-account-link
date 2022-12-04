@@ -88,13 +88,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								panic(err.Error())
 							}
 							defer db.Close()
+
 							rs, err := db.Exec("DELETE * FROM linebot WHERE userId = ?", usr.LinkUserID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
 							}
-							extra, err := rs.RowsAffected()
-							log.Println("id:", extra)
+							log.Println("id:", rs)
 						}
 					}
 				}
