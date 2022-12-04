@@ -62,7 +62,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
 						for _, usr := range customers {
-							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", res, usr.ID)
+							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
@@ -75,7 +75,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 							log.Println("id:", idAff)
 							if idAff == 0 {
-								_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", res)
+								_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
 								if err != nil {
 									log.Println("exec failed:", err)
 								}
