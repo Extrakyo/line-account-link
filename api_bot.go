@@ -82,7 +82,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									log.Println("exec failed:", err)
 								}
 							}
+							return
 						}
+						return
 					}
 
 					//3. The bot server calls the Messaging API to send a linking URL to the user.
