@@ -86,7 +86,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								panic(err.Error())
 							}
 							defer db.Close()
-							rs, err := db.Exec("DELETE FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+							rs, err := db.Exec("DELETE *FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
