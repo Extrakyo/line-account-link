@@ -56,7 +56,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					log.Println("Get user token:", res.LinkToken)
 					for _, usr := range linkedCustomers {
-						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", res.LinkToken, usr.Nounce)
+						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", userID, usr.Nounce)
 						if err != nil {
 							log.Println("exec failed:", err)
 							return
@@ -69,7 +69,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						log.Println("id:", idAff)
 						if idAff == 0 {
-							_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", res.LinkToken)
+							_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", userID)
 							if err != nil {
 								log.Println("exec failed:", err)
 							}
