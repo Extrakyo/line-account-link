@@ -83,19 +83,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								}
 							}
 
+							//3. The bot server calls the Messaging API to send a linking URL to the user.
+							//4. The LINE Platform sends a linking URL to the user.
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
+							return
 						}
-
 					}
-
-					//3. The bot server calls the Messaging API to send a linking URL to the user.
-					//4. The LINE Platform sends a linking URL to the user.
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
-						log.Println("err:", err)
-						return
-					}
-					return
 
 				case strings.EqualFold(message.Text, "list"):
 					for _, usr := range linkedCustomers {
