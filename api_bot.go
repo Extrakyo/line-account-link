@@ -45,9 +45,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				switch {
 				case strings.EqualFold(message.Text, "link"):
-					for _, usr := range linkedCustomers {
+					for _, usr := range customers {
 						if usr.Nounce == event.AccountLink.Nonce {
-							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", userID, usr.Nounce)
+							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", userID, usr.ID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
