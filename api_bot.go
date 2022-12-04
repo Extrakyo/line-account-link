@@ -46,47 +46,45 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.EqualFold(message.Text, "link"):
 					for _, usr := range customers {
-
-						//token link
-						//1. The bot server calls the API that issues a link token from the LINE user ID.
-						//2. The LINE Platform returns the link token to the bot server.
-						res, err := bot.IssueLinkToken(userID).Do()
+						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
 						if err != nil {
-							log.Println("Issue link token error, err=", err)
-						}
-						if usr.Nounce == event.AccountLink.Nonce {
-							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
-							if err != nil {
-								log.Println("exec failed:", err)
-								return
-							}
-
-							idAff, err := rs.RowsAffected()
-							if err != nil {
-								log.Println("RowsAffected failed:", err)
-								return
-							}
-							log.Println("id:", idAff)
-							if idAff == 0 {
-								_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
-								if err != nil {
-									log.Println("exec failed:", err)
-								}
-							}
-
-							log.Println("Get user token:", res.LinkToken)
-
-							//3. The bot server calls the Messaging API to send a linking URL to the user.
-							//4. The LINE Platform sends a linking URL to the user.
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
-								log.Println("err:", err)
-								return
-							}
+							log.Println("exec failed:", err)
 							return
 						}
+
+						idAff, err := rs.RowsAffected()
+						if err != nil {
+							log.Println("RowsAffected failed:", err)
+							return
+						}
+						log.Println("id:", idAff)
+						if idAff == 0 {
+							_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
+							if err != nil {
+								log.Println("exec failed:", err)
+							}
+						}
 					}
+
+					//token link
+					//1. The bot server calls the API that issues a link token from the LINE user ID.
+					//2. The LINE Platform returns the link token to the bot server.
+					res, err := bot.IssueLinkToken(userID).Do()
+					if err != nil {
+						log.Println("Issue link token error, err=", err)
+					}
+
+					log.Println("Get user token:", res.LinkToken)
+
+					//3. The bot server calls the Messaging API to send a linking URL to the user.
+					//4. The LINE Platform sends a linking URL to the user.
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+						log.Println("err:", err)
+						return
+					}
+					return
 
 				case strings.EqualFold(message.Text, "list"):
 					for _, usr := range linkedCustomers {
