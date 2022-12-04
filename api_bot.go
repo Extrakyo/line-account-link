@@ -79,23 +79,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 
-					// case strings.EqualFold(message.Text, "Un"):
-					// 	for _, usr := range linkedCustomers {
-					// 		if usr.LinkUserID == event.Source.UserID {
-					// 			db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-					// 			if err != nil {
-					// 				panic(err.Error())
-					// 			}
-					// 			defer db.Close()
-
-					// 			usr.LinkUserID = ""
-					// 			df, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
-					// 			if err != nil {
-					// 				log.Println("exec failed:", err)
-					// 				return
-					// 			}
-					// 		}
-					// 	}
+				case strings.EqualFold(message.Text, "Un"):
+					for _, usr := range linkedCustomers {
+						if usr.LinkUserID == event.Source.UserID {
+							_, err := db.Exec("DELETE * FROM linebot WHERE userId = ?", usr.LinkUserID)
+							if err != nil {
+								log.Println("exec failed:", err)
+								return
+							}
+						}
+					}
 				}
 
 				//Check user if it is linked.
