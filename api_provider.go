@@ -69,15 +69,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 			if PW == usr.PW {
 				//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 				sNonce := generateNounce(token, name, pw)
-
-				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-				if err != nil {
-					panic(err.Error())
-				}
-				defer db.Close()
 				//update nounce to provider DB to store it.
 				// customers[i].Nounce = sNonce
-				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, user.ID)
+				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, usr.ID)
 				if err != nil {
 					log.Println("exec failed:", err)
 					return
@@ -95,7 +89,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 					}
 				}
-				results, err := db.Query("SELECT `nounce` FROM `linbot` WHERE `username` = ?", user.ID)
+				results, err := db.Query("SELECT `nounce` FROM `linbot` WHERE `username` = ?", usr.ID)
 				if err != nil {
 					panic(err.Error())
 				}
