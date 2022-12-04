@@ -64,7 +64,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 							defer db.Close()
 
-							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", userID, usr.Nounce)
+							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
@@ -77,14 +77,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 							log.Println("id:", idAff)
 							if idAff == 0 {
-								_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", userID)
+								_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
 								if err != nil {
 									log.Println("exec failed:", err)
 								}
 							}
-							return
+
 						}
-						return
+
 					}
 
 					//3. The bot server calls the Messaging API to send a linking URL to the user.
