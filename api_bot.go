@@ -95,6 +95,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.Name = ""
 							log.Println("USERID:" + usr.LinkUserID)
 							log.Println("Source_UserId:" + event.Source.UserID)
+							return
 						}
 					}
 				}
