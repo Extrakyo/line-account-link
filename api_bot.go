@@ -142,15 +142,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
-			//11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
-			// account link success
-			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			for _, user := range linkedCustomers {
-				if event.Source.UserID == user.LinkUserID {
-					log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
-					return
-				}
-			}
+			// //11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
+			// // account link success
+			// log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
+			// for _, user := range linkedCustomers {
+			// 	if event.Source.UserID == user.LinkUserID {
+			// 		log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
+			// 		return
+			// 	}
+			// }
 
 			//search from all user using nounce.
 			for _, usr := range customers {
@@ -179,14 +179,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println("UserId:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nName:" + linkedUser.Name)
 
-					// linkedUser := LinkCustomer{
-					// 	Name:       usr.Name,
-					// 	LinkUserID: event.Source.UserID,
-					// }
-
-					// linkedCustomers = append(linkedCustomers, linkedUser)
-
-					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
 						linebot.NewTextMessage("你好，"+usr.Name+"，您的帳號已成功綁定！")).Do(); err != nil {
