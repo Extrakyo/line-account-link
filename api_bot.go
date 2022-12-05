@@ -17,6 +17,7 @@ type LinkCustomer struct {
 	Name       string
 	Nounce     string
 	LinkUserID string
+	userID     string
 }
 
 var linkedCustomers []LinkCustomer
@@ -102,7 +103,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
-					if usr.LinkUserID == event.Source.UserID {
+
+					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+					if err != nil {
+						panic(err.Error())
+					}
+
+					var ur LinkCustomer
+					for rs.Next() {
+						rs.Scan(&ur.userID)
+					}
+
+					if ur.userID == usr.LinkUserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
 							linebot.NewTextMessage("你好 "+usr.Name+"，可以使用功能了!")).Do(); err != nil {
@@ -153,11 +165,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-					results, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+					results, err := db.Query("SELECT `userId`, `nounce`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
-					log.Println(usr.ID)
+					log.Println(usr.Nounce)
 
 					// var user LinkCustomer
 					// for results.Next() {
@@ -166,10 +178,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					// }
 					var linkedUser LinkCustomer
 					for results.Next() {
-						results.Scan(&linkedUser.LinkUserID, &linkedUser.Name)
+						results.Scan(&linkedUser.LinkUserID, &linkedUser.Nounce, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
-					log.Println("UserId:" + linkedUser.LinkUserID + "Name:" + linkedUser.Name)
+					log.Println("UserId:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nName:" + linkedUser.Name)
 
 					// linkedUser := LinkCustomer{
 					// 	Name:       usr.Name,
