@@ -68,11 +68,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 				case strings.EqualFold(message.Text, "Un"):
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
-						log.Println("err:", err)
+					for _, usr := range linkedCustomers {
+						if usr.LinkUserID == event.Source.UserID {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
+								log.Println("err:", err)
 
+							}
+
+						}
 					}
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
