@@ -88,10 +88,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("exec failed:", err)
 								return
 							}
-							log.Println("rs")
+
 							usr.LinkUserID = ""
 							usr.Nounce = ""
 							usr.Name = ""
+							log.Println("USERID:" + usr.LinkUserID)
+							log.Println("Source_UserId:" + event.Source.UserID)
 						}
 					}
 				}
