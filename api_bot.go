@@ -53,15 +53,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
 					res, err := bot.IssueLinkToken(userID).Do()
-					for _, usr := range linkedCustomers {
-						_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
-						if err != nil {
-							log.Println("exec failed:", err)
-							return
-						}
-						log.Println("name:" + usr.ID)
-						log.Println("userID:" + event.Source.UserID)
-					}
 
 					if err != nil {
 						log.Println("Issue link token error, err=", err)
@@ -75,19 +66,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
 					}
-
-				// case strings.EqualFold(message.Text, "list"):
-				// 	for _, usr := range linkedCustomers {
-				// 		if usr.LinkUserID == event.Source.UserID {
-				// 			if _, err = bot.ReplyMessage(
-				// 				event.ReplyToken,
-				// 				linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
-				// 				log.Println("err:", err)
-				// 				return
-				// 			}
-				// 			return
-				// 		}
-				// 	}
 
 				case strings.EqualFold(message.Text, "Un"):
 					if _, err = bot.ReplyMessage(
@@ -174,6 +152,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
+
+					_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", usr.UserId, usr.Nounce)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
+					}
+					log.Println("name:" + usr.ID)
+					log.Println("userID:" + usr.UserId)
 
 					results, err := db.Query("SELECT `userId`, `nounce`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
