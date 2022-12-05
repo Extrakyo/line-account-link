@@ -106,11 +106,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if err != nil {
 						panic(err.Error())
 					}
+					log.Println("USERID:" + usr.userID)
 
 					var ur LinkCustomer
 					for rs.Next() {
 						rs.Scan(&ur.userID)
 					}
+					log.Println("USERID_df:" + ur.userID)
 
 					if ur.userID == usr.LinkUserID {
 						if _, err = bot.ReplyMessage(
