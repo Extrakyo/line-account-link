@@ -63,25 +63,26 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//4. The LINE Platform sends a linking URL to the user.
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Account Link: link= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+						linebot.NewTextMessage("帳號連結: 連結= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
 					return
-				case strings.EqualFold(message.Text, "list"):
-					for _, usr := range linkedCustomers {
-						if usr.LinkUserID == event.Source.UserID {
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
-								log.Println("err:", err)
-								return
-							}
-							return
-						}
-					}
+				// case strings.EqualFold(message.Text, "list"):
+				// 	for _, usr := range linkedCustomers {
+				// 		if usr.LinkUserID == event.Source.UserID {
+				// 			if _, err = bot.ReplyMessage(
+				// 				event.ReplyToken,
+				// 				linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
+				// 				log.Println("err:", err)
+				// 				return
+				// 			}
+				// 			return
+				// 		}
+				// 	}
 
 				case strings.EqualFold(message.Text, "Un"):
+
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
 							log.Println("before_USERID:" + usr.LinkUserID)
@@ -99,6 +100,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							return
 						}
 					}
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("您已成功取消綁定帳號。")).Do(); err != nil {
+						log.Println("err:", err)
+						return
+					}
+					return
+
 				}
 
 				//Check user if it is linked.
@@ -123,6 +132,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						return
 					}
+
 				}
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
 
@@ -132,10 +142,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						WithQuickReplies(linebot.NewQuickReplyItems(
 							linebot.NewQuickReplyButton(
 								"",
-								linebot.NewMessageAction("account link", "link")),
-							linebot.NewQuickReplyButton(
-								"",
-								linebot.NewMessageAction("list user", "list")),
+								linebot.NewMessageAction("綁定帳號", "link")),
+							// linebot.NewQuickReplyButton(
+							// 	"",
+							// 	linebot.NewMessageAction("list user", "Un")),
 						)),
 				).Do(); err != nil {
 					log.Println("err:", err)
@@ -148,7 +158,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
 				if event.Source.UserID == user.LinkUserID {
-					log.Println("User:", user, " already linked account.")
+					log.Println("使用者:", user, " 您的帳號已被綁定。")
 					return
 				}
 			}
@@ -193,7 +203,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.Name+" your account already linked to this chatbot.")).Do(); err != nil {
+						linebot.NewTextMessage("你好 "+usr.Name+" 您的帳號已成功綁定。")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
