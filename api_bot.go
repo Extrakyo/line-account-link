@@ -153,13 +153,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 
-					_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", usr.UserId, usr.Nounce)
+					_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
 					}
 					log.Println("name:" + usr.ID)
-					log.Println("userID:" + usr.UserId)
+					log.Println("userID:" + event.Source.UserID)
 
 					results, err := db.Query("SELECT `userId`, `nounce`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
