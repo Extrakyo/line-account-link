@@ -150,20 +150,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-					if err != nil {
-						panic(err.Error())
-					}
-					defer db.Close()
 					results, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
 
-					var linkedUser LinkCustomer
+					var user LinkCustomer
 					for results.Next() {
-						results.Scan(linkedUser.LinkUserID, &linkedUser.Name)
-						linkedCustomers = append(linkedCustomers, linkedUser)
+						results.Scan(&user.LinkUserID, &user.Name)
+						linkedCustomers = append(linkedCustomers, user)
 					}
 					// linkedUser := LinkCustomer{
 					// 	Name:       usr.Name,
