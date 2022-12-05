@@ -134,12 +134,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					defer db.Close()
 
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
 					}
-					log.Println("Username:" + usr.ID + "\nUserId:" + usr.UserId + "\nUSERID:" + event.Source.UserID)
+					log.Println("Nounce:" + usr.Nounce + "\nUserId:" + usr.UserId + "\nUSERID:" + event.Source.UserID)
 					log.Println(rs)
 
 					// idAff, err := rs.RowsAffected()
