@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strings"
@@ -21,6 +22,11 @@ type LinkCustomer struct {
 var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 	events, err := bot.ParseRequest(r)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
@@ -128,12 +134,27 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
-					linkedUser := LinkCustomer{
-						Name:       usr.Name,
-						LinkUserID: event.Source.UserID,
-					}
 
-					linkedCustomers = append(linkedCustomers, linkedUser)
+					_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
+					}
+					results, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+					if err != nil {
+						panic(err.Error())
+					}
+					var linkedUser LinkCustomer
+					for results.Next() {
+						results.Scan(&linkedUser.LinkUserID)
+						linkedCustomers = append(linkedCustomers, linkedUser)
+					}
+					// linkedUser := LinkCustomer{
+					// 	Name:       usr.Name,
+					// 	LinkUserID: event.Source.UserID,
+					// }
+
+					// linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
