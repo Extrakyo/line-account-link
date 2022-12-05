@@ -75,8 +75,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								return
 							}
 						}
-						return
 					}
+					return
 
 				// case strings.EqualFold(message.Text, "list"):
 				// 	for _, usr := range linkedCustomers {
