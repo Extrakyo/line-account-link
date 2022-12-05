@@ -160,12 +160,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						results.Scan(&user.LinkUserID, &user.Name)
 						linkedCustomers = append(linkedCustomers, user)
 					}
-					// linkedUser := LinkCustomer{
-					// 	Name:       usr.Name,
-					// 	LinkUserID: event.Source.UserID,
-					// }
+					linkedUser := LinkCustomer{
+						Name:       usr.Name,
+						LinkUserID: event.Source.UserID,
+					}
 
-					// linkedCustomers = append(linkedCustomers, linkedUser)
+					linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
