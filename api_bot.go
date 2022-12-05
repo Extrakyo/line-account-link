@@ -91,8 +91,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.LinkUserID = ""
 							usr.Nounce = ""
 							usr.Name = ""
-							log.Println("USERID:" + usr.LinkUserID)
-							log.Println("Source_UserId:" + event.Source.UserID)
+							// log.Println("USERID:" + usr.LinkUserID)
+							// log.Println("Source_UserId:" + event.Source.UserID)
 							return
 						}
 					}
@@ -144,15 +144,28 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
-			// //11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
-			// // account link success
-			// log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			// for _, user := range linkedCustomers {
-			// 	if event.Source.UserID == user.LinkUserID {
-			// 		log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
-			// 		return
-			// 	}
-			// }
+			//11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
+			// account link success
+			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
+			for _, user := range linkedCustomers {
+
+				rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", user.Nounce)
+				if err != nil {
+					panic(err.Error())
+				}
+				// log.Println("USERID:" + usr.)
+
+				var ur LinkCustomer
+				for rs.Next() {
+					rs.Scan(&ur.userID)
+				}
+				log.Println("USERID_df:" + ur.userID)
+
+				if ur.userID == user.LinkUserID {
+					log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
+					return
+				}
+			}
 
 			//search from all user using nounce.
 			for _, usr := range customers {
