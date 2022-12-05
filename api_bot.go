@@ -63,7 +63,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//4. The LINE Platform sends a linking URL to the user.
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("帳號連結: 連結= "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
