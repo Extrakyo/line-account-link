@@ -101,17 +101,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				//Check user if it is linked.
-				for _, usr := range linkedCustomers {
-					if usr.LinkUserID == event.Source.UserID {
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+usr.Name+"，可以使用功能了!")).Do(); err != nil {
-							log.Println("err:", err)
-							return
-						}
-						return
-					}
-				}
 
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
 
@@ -183,5 +172,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			log.Println("Error: no such user:", event.Source.UserID, " nounce=", event.AccountLink.Nonce, " for account link.")
 		}
+		for _, usr := range linkedCustomers {
+			if usr.LinkUserID == event.Source.UserID {
+				if _, err = bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewTextMessage("你好 "+usr.Name+"，可以使用功能了!")).Do(); err != nil {
+					log.Println("err:", err)
+					return
+				}
+				return
+			}
+		}
 	}
+
 }
