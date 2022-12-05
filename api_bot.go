@@ -166,7 +166,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println("name:" + usr.ID)
 					log.Println("userID:" + USERID)
 
-					results, err := db.Query("SELECT `userId`, `nounce`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+					results, err := db.Query("SELECT `userId`, `nounce`, `name` , `username` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
@@ -174,7 +174,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					var linkedUser LinkCustomer
 					for results.Next() {
-						results.Scan(&linkedUser.LinkUserID, &linkedUser.Nounce, &linkedUser.Name)
+						results.Scan(&linkedUser.LinkUserID, &linkedUser.Nounce, &linkedUser.Name, &linkedUser.ID)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 					log.Println("UserId:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nName:" + linkedUser.Name)
