@@ -83,11 +83,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case strings.EqualFold(message.Text, "Un"):
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
-							_, err := db.Exec("DELETE FROM linebot WHERE `nounce` = ?", usr.Nounce)
+							rs, err := db.Exec("DELETE FROM linebot WHERE `nounce` = ?", usr.Nounce)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
 							}
+							log.Println(rs)
 							usr.LinkUserID = ""
 							usr.Nounce = ""
 							usr.Name = ""
