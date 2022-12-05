@@ -94,17 +94,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 					log.Println(rs)
 				}
 
-				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+				results, err := db.Query("SELECT `nounce`, `name` FROM linebot WHERE `username` = ?", usr.ID)
 				if err != nil {
 					panic(err.Error())
 				}
-				defer db.Close()
 
-				results, err := db.Query("SELECT `nounce` FROM linebot WHERE `username` = ?", usr.ID)
-				if err != nil {
-					panic(err.Error())
-				}
-				var user CustData
 				for results.Next() {
 					results.Scan(&user.Nounce, &user.Name)
 					customers = append(customers, user)
