@@ -82,7 +82,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
 							log.Println("before_USERID:" + usr.LinkUserID)
-							_, err := db.Exec("DELETE FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+							_, err := db.Exec("DELETE FROM `linebot` WHERE `username` = ?", usr.ID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
