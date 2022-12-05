@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 	"strings"
@@ -128,59 +127,23 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			for _, usr := range customers {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
-					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-					if err != nil {
-						panic(err.Error())
-					}
-					defer db.Close()
-
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
-					if err != nil {
-						log.Println("exec failed:", err)
-						return
-					}
-					log.Println("Nounce:" + usr.Nounce + "\nUserId:" + usr.UserId + "\nUSERID:" + event.Source.UserID)
-					log.Println(rs)
-
-					// idAff, err := rs.RowsAffected()
-					// if err != nil {
-					// 	log.Println("RowsAffected failed:", err)
-					// 	return
-					// }
-					// log.Println("id:", idAff)
-					// if idAff == 0 {
-					// 	rs, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
-					// 	if err != nil {
-					// 		log.Println("exec failed:", err)
-					// 	}
-					// 	log.Println(rs)
-					// }
-
-					results, err := db.Query("SELECT `userId`, `fname` FROM linebot WHERE `username` = ?", usr.Nounce, usr.ID)
-					if err != nil {
-						panic(err.Error())
+					//Append to linked DB.
+					linkedUser := LinkCustomer{
+						Name:       usr.Name,
+						LinkUserID: event.Source.UserID,
 					}
 
-					// log.Println(results)
-
-					var linkedUser LinkCustomer
-					for results.Next() {
-						results.Scan(&linkedUser.LinkUserID, &linkedUser.Name)
-						linkedCustomers = append(linkedCustomers, linkedUser)
-					}
-
-					// linkedCustomers = append(linkedCustomers, linkedUser)
+					linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("你好"+usr.Name+"你的Foodler帳號已成功連結")).Do(); err != nil {
+						linebot.NewTextMessage("Hi "+usr.Name+" your account already linked to this chatbot.")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
 					return
 				}
-
 			}
 			log.Println("Error: no such user:", event.Source.UserID, " nounce=", event.AccountLink.Nonce, " for account link.")
 		}
