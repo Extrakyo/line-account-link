@@ -17,14 +17,12 @@ type LinkCustomer struct {
 	Nounce string
 	//For chatbot linked data.
 	LinkUserID string
-	LinkId     string
 }
 
 var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
-
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)
@@ -45,11 +43,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				switch {
 				case strings.EqualFold(message.Text, "link"):
-
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
 					res, err := bot.IssueLinkToken(userID).Do()
+
 					if err != nil {
 						log.Println("Issue link token error, err=", err)
 					}
@@ -64,7 +62,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					return
-
 				case strings.EqualFold(message.Text, "list"):
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
@@ -136,7 +133,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						panic(err.Error())
 					}
 					defer db.Close()
-					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
@@ -155,7 +152,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 
-					results, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+					results, err := db.Query("SELECT `userId`, `fname` FROM linebot WHERE `username` = ?", usr.Nounce, usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
@@ -164,7 +161,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					var linkedUser LinkCustomer
 					for results.Next() {
-						results.Scan(&linkedUser.LinkUserID)
+						results.Scan(&linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 
