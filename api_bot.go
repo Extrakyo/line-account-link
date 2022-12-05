@@ -89,7 +89,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								return
 							}
 							log.Println("rs")
-							log.Println(usr.Nounce)
 							usr.LinkUserID = ""
 							usr.Nounce = ""
 							usr.Name = ""
