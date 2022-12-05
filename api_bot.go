@@ -86,25 +86,26 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("您已成功取消綁定帳號。")).Do(); err != nil {
 						log.Println("err:", err)
-						for _, usr := range linkedCustomers {
-							if usr.LinkUserID == event.Source.UserID {
-								log.Println("before_USERID:" + usr.LinkUserID)
-								_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
-								if err != nil {
-									log.Println("exec failed:", err)
-									return
-								}
 
-								usr.LinkUserID = ""
-								usr.Nounce = ""
-								usr.Name = ""
-								log.Println("USERID:" + usr.LinkUserID)
-								log.Println("Source_UserId:" + event.Source.UserID)
+					}
+					for _, usr := range linkedCustomers {
+						if usr.LinkUserID == event.Source.UserID {
+							log.Println("before_USERID:" + usr.LinkUserID)
+							_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
+							if err != nil {
+								log.Println("exec failed:", err)
 								return
 							}
+
+							usr.LinkUserID = ""
+							usr.Nounce = ""
+							usr.Name = ""
+							log.Println("USERID:" + usr.LinkUserID)
+							log.Println("Source_UserId:" + event.Source.UserID)
+							return
 						}
-						return
 					}
+					return
 				}
 
 				//Check user if it is linked.
