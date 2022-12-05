@@ -133,24 +133,27 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						panic(err.Error())
 					}
 					defer db.Close()
+
 					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
 					}
+					log.Println(rs)
 
-					idAff, err := rs.RowsAffected()
-					if err != nil {
-						log.Println("RowsAffected failed:", err)
-						return
-					}
-					log.Println("id:", idAff)
-					if idAff == 0 {
-						_, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
-						if err != nil {
-							log.Println("exec failed:", err)
-						}
-					}
+					// idAff, err := rs.RowsAffected()
+					// if err != nil {
+					// 	log.Println("RowsAffected failed:", err)
+					// 	return
+					// }
+					// log.Println("id:", idAff)
+					// if idAff == 0 {
+					// 	rs, err := db.Exec("INSERT INTO `linebot`(`userId`) VALUES (?)", event.Source.UserID)
+					// 	if err != nil {
+					// 		log.Println("exec failed:", err)
+					// 	}
+					// 	log.Println(rs)
+					// }
 
 					results, err := db.Query("SELECT `userId`, `fname` FROM linebot WHERE `username` = ?", usr.Nounce, usr.ID)
 					if err != nil {
