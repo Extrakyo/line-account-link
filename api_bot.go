@@ -68,18 +68,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					return
-				// case strings.EqualFold(message.Text, "list"):
-				// 	for _, usr := range linkedCustomers {
-				// 		if usr.LinkUserID == event.Source.UserID {
-				// 			if _, err = bot.ReplyMessage(
-				// 				event.ReplyToken,
-				// 				linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
-				// 				log.Println("err:", err)
-				// 				return
-				// 			}
-				// 			return
-				// 		}
-				// 	}
 
 				case strings.EqualFold(message.Text, "Un"):
 					if _, err = bot.ReplyMessage(
@@ -156,7 +144,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
 				if event.Source.UserID == user.LinkUserID {
-					log.Println("使用者:", user, " 您的帳號已被綁定。")
+					log.Println("使用者:", user.Name, " 您的帳號已被綁定。")
 					return
 				}
 			}
@@ -179,11 +167,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println(usr.Nounce)
 
-					// var user LinkCustomer
-					// for results.Next() {
-					// 	results.Scan(&user.LinkUserID, &user.Name)
-					// 	linkedCustomers = append(linkedCustomers, user)
-					// }
 					var linkedUser LinkCustomer
 					for results.Next() {
 						results.Scan(&linkedUser.LinkUserID, &linkedUser.Nounce, &linkedUser.Name)
@@ -191,14 +174,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println("UserId:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nName:" + linkedUser.Name)
 
-					// linkedUser := LinkCustomer{
-					// 	Name:       usr.Name,
-					// 	LinkUserID: event.Source.UserID,
-					// }
-
-					// linkedCustomers = append(linkedCustomers, linkedUser)
-
-					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
 						linebot.NewTextMessage("你好 "+usr.Name+" 您的帳號已成功綁定。")).Do(); err != nil {
