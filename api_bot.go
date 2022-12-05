@@ -139,6 +139,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 						return
 					}
+					log.Println("Username:" + usr.ID + "\nUserId:" + usr.UserId + "\nUSERID:" + event.Source.UserID)
 					log.Println(rs)
 
 					// idAff, err := rs.RowsAffected()
