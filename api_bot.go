@@ -153,7 +153,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-					results, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
@@ -163,11 +163,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					// 	results.Scan(&user.LinkUserID, &user.Name)
 					// 	linkedCustomers = append(linkedCustomers, user)
 					// }
+					var linkedUser LinkCustomer
 					for results.Next() {
-						var linkedUser LinkCustomer
-						results.Scan(&linkedUser.LinkUserID)
+						results.Scan(&linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
+					log.Println("UserId:" + linkedUser.LinkUserID + "Name:" + linkedUser.Name)
+
 					// linkedUser := LinkCustomer{
 					// 	Name:       usr.Name,
 					// 	LinkUserID: event.Source.UserID,
