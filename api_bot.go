@@ -149,14 +149,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 						return
 					}
-					results, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
 
 					var linkedUser LinkCustomer
 					for results.Next() {
-						results.Scan(linkedUser.LinkUserID)
+						results.Scan(linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 					log.Println(linkedUser)
