@@ -83,7 +83,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case strings.EqualFold(message.Text, "Un"):
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
-							_, err := db.Exec("DELETE FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+							_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
@@ -150,13 +150,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 						return
 					}
-					results, err := db.Query("SELECT `userId`, `nounce` FROM `linebot` WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
+
 					var linkedUser LinkCustomer
 					for results.Next() {
-						results.Scan(linkedUser.LinkUserID, &linkedUser.Nounce)
+						results.Scan(linkedUser.LinkUserID)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
 					log.Println(linkedUser)
