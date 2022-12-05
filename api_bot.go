@@ -53,6 +53,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
 					res, err := bot.IssueLinkToken(userID).Do()
+					for _, usr := range linkedCustomers {
+						_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
+						if err != nil {
+							log.Println("exec failed:", err)
+							return
+						}
+						log.Println("name:" + usr.ID)
+						log.Println("userID:" + event.Source.UserID)
+					}
 
 					if err != nil {
 						log.Println("Issue link token error, err=", err)
@@ -66,17 +75,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
 					}
-
-					for _, usr := range linkedCustomers {
-						_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
-						if err != nil {
-							log.Println("exec failed:", err)
-							return
-						}
-						log.Println("name:" + usr.ID)
-						log.Println("userID:" + event.Source.UserID)
-					}
-					return
 
 				// case strings.EqualFold(message.Text, "list"):
 				// 	for _, usr := range linkedCustomers {
