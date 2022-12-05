@@ -65,9 +65,19 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
+					}
+
+					for _, usr := range linkedCustomers {
+						if usr.Nounce == event.AccountLink.Nonce {
+							_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
+							if err != nil {
+								log.Println("exec failed:", err)
+								return
+							}
+						}
 						return
 					}
-					return
+
 				// case strings.EqualFold(message.Text, "list"):
 				// 	for _, usr := range linkedCustomers {
 				// 		if usr.LinkUserID == event.Source.UserID {
@@ -166,12 +176,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
-
-					_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
-					if err != nil {
-						log.Println("exec failed:", err)
-						return
-					}
 
 					results, err := db.Query("SELECT `userId`, `nounce`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
