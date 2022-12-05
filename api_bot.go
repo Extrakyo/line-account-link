@@ -149,6 +149,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 						return
 					}
+
+					db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+					if err != nil {
+						panic(err.Error())
+					}
+					defer db.Close()
 					results, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
@@ -159,7 +165,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						results.Scan(linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
-					log.Println(linkedUser)
 					// linkedUser := LinkCustomer{
 					// 	Name:       usr.Name,
 					// 	LinkUserID: event.Source.UserID,
