@@ -101,7 +101,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				//Check user if it is linked.
-
+				for _, usr := range linkedCustomers {
+					if usr.LinkUserID == event.Source.UserID {
+						if _, err = bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("你好 "+usr.Name+"，可以使用功能了!")).Do(); err != nil {
+							log.Println("err:", err)
+							return
+						}
+						return
+					}
+				}
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
 
 				if _, err = bot.ReplyMessage(
@@ -143,22 +153,27 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-					// results, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
-					// if err != nil {
-					// 	panic(err.Error())
-					// }
+					results, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
+					if err != nil {
+						panic(err.Error())
+					}
 
 					// var user LinkCustomer
 					// for results.Next() {
 					// 	results.Scan(&user.LinkUserID, &user.Name)
 					// 	linkedCustomers = append(linkedCustomers, user)
 					// }
-					linkedUser := LinkCustomer{
-						Name:       usr.Name,
-						LinkUserID: event.Source.UserID,
+					for results.Next() {
+						var linkedUser LinkCustomer
+						results.Scan(&linkedUser.LinkUserID)
+						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
+					// linkedUser := LinkCustomer{
+					// 	Name:       usr.Name,
+					// 	LinkUserID: event.Source.UserID,
+					// }
 
-					linkedCustomers = append(linkedCustomers, linkedUser)
+					// linkedCustomers = append(linkedCustomers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
@@ -172,17 +187,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			log.Println("Error: no such user:", event.Source.UserID, " nounce=", event.AccountLink.Nonce, " for account link.")
 		}
-		for _, usr := range linkedCustomers {
-			if usr.LinkUserID == event.Source.UserID {
-				if _, err = bot.ReplyMessage(
-					event.ReplyToken,
-					linebot.NewTextMessage("你好 "+usr.Name+"，可以使用功能了!")).Do(); err != nil {
-					log.Println("err:", err)
-					return
-				}
-				return
-			}
-		}
+
 	}
 
 }
