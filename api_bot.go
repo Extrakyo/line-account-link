@@ -157,6 +157,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if err != nil {
 						panic(err.Error())
 					}
+					log.Println(usr.ID)
 
 					// var user LinkCustomer
 					// for results.Next() {
