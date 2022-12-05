@@ -65,13 +65,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 	pw := r.FormValue("pass")
 	token := r.FormValue("token")
 	PW := MD5(pw)
-	for i, usr := range customers {
+	for _, usr := range customers {
 		if usr.ID == name {
 			if PW == usr.PW {
 				//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 				sNonce := generateNounce(token, name, pw)
 				//update nounce to provider DB to store it.
-				customers[i].Nounce = sNonce
+				// customers[i].Nounce = sNonce
 				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, usr.ID)
 				if err != nil {
 					log.Println("exec failed:", err)
@@ -94,21 +94,21 @@ func login(w http.ResponseWriter, r *http.Request) {
 					log.Println(rs)
 				}
 
-				// db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-				// if err != nil {
-				// 	panic(err.Error())
-				// }
-				// defer db.Close()
+				db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+				if err != nil {
+					panic(err.Error())
+				}
+				defer db.Close()
 
-				// results, err := db.Query("SELECT `nounce` FROM linebot WHERE `username` = ?", usr.ID)
-				// if err != nil {
-				// 	panic(err.Error())
-				// }
+				results, err := db.Query("SELECT `nounce` FROM linebot WHERE `username` = ?", usr.ID)
+				if err != nil {
+					panic(err.Error())
+				}
 
-				// for results.Next() {
-				// 	results.Scan(&user.Nounce)
-				// 	customers = append(customers, user)
-				// }
+				for results.Next() {
+					results.Scan(&user.Nounce)
+					customers = append(customers, user)
+				}
 
 				//9. The web server redirects the user to the account-linking endpoint.
 				//10. The user accesses the account-linking endpoint.
