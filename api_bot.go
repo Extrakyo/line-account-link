@@ -68,12 +68,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					for _, usr := range linkedCustomers {
-						if usr.Nounce == event.AccountLink.Nonce {
-							_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", event.Source.UserID, usr.Nounce)
-							if err != nil {
-								log.Println("exec failed:", err)
-								return
-							}
+						_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", event.Source.UserID, usr.ID)
+						if err != nil {
+							log.Println("exec failed:", err)
+							return
 						}
 					}
 					return
@@ -183,11 +181,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println(usr.Nounce)
 
-					// var user LinkCustomer
-					// for results.Next() {
-					// 	results.Scan(&user.LinkUserID, &user.Name)
-					// 	linkedCustomers = append(linkedCustomers, user)
-					// }
 					var linkedUser LinkCustomer
 					for results.Next() {
 						results.Scan(&linkedUser.LinkUserID, &linkedUser.Nounce, &linkedUser.Name)
