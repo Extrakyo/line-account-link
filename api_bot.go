@@ -68,32 +68,43 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					return
+				// case strings.EqualFold(message.Text, "list"):
+				// 	for _, usr := range linkedCustomers {
+				// 		if usr.LinkUserID == event.Source.UserID {
+				// 			if _, err = bot.ReplyMessage(
+				// 				event.ReplyToken,
+				// 				linebot.NewTextMessage("List all user: link= "+serverURL)).Do(); err != nil {
+				// 				log.Println("err:", err)
+				// 				return
+				// 			}
+				// 			return
+				// 		}
+				// 	}
 
 				case strings.EqualFold(message.Text, "Un"):
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("您已成功取消綁定帳號。")).Do(); err != nil {
+						linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
 						log.Println("err:", err)
+						for _, usr := range linkedCustomers {
+							if usr.LinkUserID == event.Source.UserID {
+								log.Println("before_USERID:" + usr.LinkUserID)
+								_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
+								if err != nil {
+									log.Println("exec failed:", err)
+									return
+								}
 
-					}
-					for _, usr := range linkedCustomers {
-						if usr.LinkUserID == event.Source.UserID {
-							log.Println("before_USERID:" + usr.LinkUserID)
-							_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
-							if err != nil {
-								log.Println("exec failed:", err)
+								usr.LinkUserID = ""
+								usr.Nounce = ""
+								usr.Name = ""
+								log.Println("USERID:" + usr.LinkUserID)
+								log.Println("Source_UserId:" + event.Source.UserID)
 								return
 							}
-
-							usr.LinkUserID = ""
-							usr.Nounce = ""
-							usr.Name = ""
-							log.Println("USERID:" + usr.LinkUserID)
-							log.Println("Source_UserId:" + event.Source.UserID)
-							return
 						}
+						return
 					}
-					return
 				}
 
 				//Check user if it is linked.
@@ -112,7 +123,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					if ur.userID == usr.LinkUserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+usr.Name+"，可以使用功能了!")).Do(); err != nil {
+							linebot.NewTextMessage("你好 "+usr.Name+"，您已成功綁定帳號！")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
@@ -124,7 +135,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				if _, err = bot.ReplyMessage(
 					event.ReplyToken,
-					linebot.NewTextMessage("歡迎使用Foodler bot ，還未綁定，請驗證").
+					linebot.NewTextMessage("歡迎使用Foodler BOT，請先綁定帳號，以使用完整功能！").
 						WithQuickReplies(linebot.NewQuickReplyItems(
 							linebot.NewQuickReplyButton(
 								"",
@@ -144,7 +155,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
 				if event.Source.UserID == user.LinkUserID {
-					log.Println("使用者:", user.Name, " 您的帳號已被綁定。")
+					log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
 					return
 				}
 			}
@@ -167,6 +178,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println(usr.Nounce)
 
+					// var user LinkCustomer
+					// for results.Next() {
+					// 	results.Scan(&user.LinkUserID, &user.Name)
+					// 	linkedCustomers = append(linkedCustomers, user)
+					// }
 					var linkedUser LinkCustomer
 					for results.Next() {
 						results.Scan(&linkedUser.LinkUserID, &linkedUser.Nounce, &linkedUser.Name)
@@ -174,9 +190,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					log.Println("UserId:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nName:" + linkedUser.Name)
 
+					// linkedUser := LinkCustomer{
+					// 	Name:       usr.Name,
+					// 	LinkUserID: event.Source.UserID,
+					// }
+
+					// linkedCustomers = append(linkedCustomers, linkedUser)
+
+					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("你好 "+usr.Name+" 您的帳號已成功綁定。")).Do(); err != nil {
+						linebot.NewTextMessage("你好 "+usr.Name+" 您的帳號已成功綁定！")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
