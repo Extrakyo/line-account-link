@@ -68,11 +68,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	PW := MD5(pw)
 	for _, usr := range customers {
-		if user.ID == name {
-			if PW == user.PW {
+		if usr.ID == name {
+			if PW == usr.PW {
 				//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 				sNonce := generateNounce(token, name, pw)
-				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, user.ID)
+				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, usr.ID)
 				if err != nil {
 					log.Println("exec failed:", err)
 					return
@@ -84,20 +84,20 @@ func login(w http.ResponseWriter, r *http.Request) {
 				}
 				if idAff == 0 {
 					usr.UserId = ""
-					log.Println("Nounce:" + user.Nounce + "\nUsername:" + user.ID + "\nPassword:" + user.PW + "\nUserId:" + user.UserId + "\nName:" + usr.Name)
+					log.Println("Nounce:" + usr.Nounce + "\nUsername:" + usr.ID + "\nPassword:" + usr.PW + "\nUserId:" + usr.UserId + "\nName:" + usr.Name)
 					_, err := db.Exec("INSERT INTO `linebot`(`nounce`, `username`, `password`, `userId`, `name`) VALUES (?, ?, ?, ?, ?)", sNonce, usr.ID, usr.PW, usr.UserId, usr.Name)
 					if err != nil {
 						log.Println("exec failed", err)
 					}
 				}
 
-				results, err := db.Query("SELECT `nounce`, `name` FROM linebot WHERE `username` = ?", user.ID)
+				results, err := db.Query("SELECT `nounce` FROM linebot WHERE `username` = ?", usr.ID)
 				if err != nil {
 					panic(err.Error())
 				}
 
 				for results.Next() {
-					results.Scan(&user.Nounce, &user.Name)
+					results.Scan(&user.Nounce)
 					customers = append(customers, user)
 				}
 
