@@ -48,7 +48,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				switch {
-				case strings.EqualFold(message.Text, "link"):
+				case strings.EqualFold(message.Text, "#1"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
@@ -67,7 +67,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("err:", err)
 					}
 
-				case strings.EqualFold(message.Text, "Un"):
+				case strings.EqualFold(message.Text, "#2"):
 					for _, usr := range linkedCustomers {
 						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
@@ -144,7 +144,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						WithQuickReplies(linebot.NewQuickReplyItems(
 							linebot.NewQuickReplyButton(
 								"",
-								linebot.NewMessageAction("綁定帳號", "link")),
+								linebot.NewMessageAction("綁定帳號", "#1")),
 							// linebot.NewQuickReplyButton(
 							// 	"",
 							// 	linebot.NewMessageAction("list user", "Un")),
