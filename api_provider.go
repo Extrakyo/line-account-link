@@ -21,6 +21,7 @@ type CustData struct {
 	Nounce string
 }
 
+var db *sql.DB
 var customers []CustData
 
 func init() {
