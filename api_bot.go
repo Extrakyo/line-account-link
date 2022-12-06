@@ -86,21 +86,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
 								log.Println("before_USERID:" + usr.LinkUserID)
-								_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
-								if err != nil {
-									log.Println("exec failed:", err)
-									return
-								}
-								usr.LinkUserID = ""
-								usr.Nounce = ""
-								usr.Name = ""
-								return
-
 							}
 
 						}
-						// for _, usr := range linkedCustomers {
+					}
 
+					for _, usr := range linkedCustomers {
+						if usr.LinkUserID == event.Source.UserID {
+							_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
+							if err != nil {
+								log.Println("exec failed:", err)
+								return
+							}
+							usr.LinkUserID = ""
+							usr.Nounce = ""
+							usr.Name = ""
+						}
 					}
 					return
 				}
