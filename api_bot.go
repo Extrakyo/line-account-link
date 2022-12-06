@@ -132,7 +132,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						return
 					}
-
 				}
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
 
@@ -155,15 +154,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		} else if event.Type == linebot.EventTypeAccountLink {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
-				USERID := event.Source.UserID
-				rsd, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, user.Nounce)
-				if err != nil {
-					log.Println("exec failed:", err)
-					return
-				}
-				log.Println(rsd)
-				log.Println("userID:" + USERID)
-
 				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
 				if err != nil {
 					panic(err.Error())
@@ -186,6 +176,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
+					USERID := event.Source.UserID
+					rsd, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
+					}
+					log.Println(rsd)
+					log.Println("userID:" + USERID)
 
 					results, err := db.Query("SELECT `userId`, `nounce`, `name` , `username` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
