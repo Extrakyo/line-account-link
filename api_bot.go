@@ -70,7 +70,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					for _, usr := range linkedCustomers {
 						USERID := event.Source.UserID
-						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", USERID, usr.ID)
+						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
 						if err != nil {
 							log.Println("exec failed:", err)
 							return
@@ -121,7 +121,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
-
 					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
@@ -167,7 +166,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
 
-				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", user.userID)
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
 				if err != nil {
 					panic(err.Error())
 				}
