@@ -113,7 +113,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									linebot.NewMessageAction("綁定帳號", "#link")),
 								linebot.NewQuickReplyButton(
 									"",
-									linebot.NewMessageAction("解除綁定", "Unlink")),
+									linebot.NewMessageAction("解除綁定", "#Unlink")),
 							)),
 					).Do(); err != nil {
 						log.Println("err:", err)
