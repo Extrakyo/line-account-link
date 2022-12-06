@@ -97,6 +97,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.LinkUserID = ""
 							usr.Nounce = ""
 							userID = ""
+							usr.Name = ""
 							return
 
 						}
@@ -185,22 +186,21 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println(rsd)
 					log.Println("userID:" + USERID)
 
-					results, err := db.Query("SELECT `userId`, `nounce`, `name` , `username` FROM linebot WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `username`, `nounce`, `userId`, `name` FROM `linebot` WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
-					log.Println(usr.Nounce)
 
 					var linkedUser LinkCustomer
 					for results.Next() {
-						results.Scan(&linkedUser.LinkUserID, &linkedUser.Nounce, &linkedUser.Name, &linkedUser.ID)
+						results.Scan(&linkedUser.ID, &linkedUser.Nounce, &linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
-					log.Println("UserId:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nName:" + linkedUser.Name + "\nUsername:" + linkedUser.ID)
+					log.Println("Username:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nUserId:" + linkedUser.LinkUserID + "\nUsername:" + linkedUser.Name)
 
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("你好，"+usr.Name+"，您的帳號已成功綁定！")).Do(); err != nil {
+						linebot.NewTextMessage("你好，"+linkedUser.Name+"，您的帳號已成功綁定！")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
