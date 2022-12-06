@@ -174,7 +174,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("exec failed:", err)
 						return
 					}
-					log.Println("name:" + usr.ID)
 					log.Println("userID:" + USERID)
 
 					results, err := db.Query("SELECT `userId`, `nounce`, `name` , `username` FROM linebot WHERE `nounce` = ?", usr.Nounce)
