@@ -77,11 +77,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 							}
 
-						}
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("你還沒完成驗證無法取消")).Do(); err != nil {
-							log.Println("err:", err)
+						} else if usr.LinkUserID != event.Source.UserID {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
+								log.Println("err:", err)
+							}
 
 						}
 					}
