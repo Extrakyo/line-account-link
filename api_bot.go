@@ -122,7 +122,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
 
-					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
+					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
