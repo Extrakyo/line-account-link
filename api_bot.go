@@ -85,14 +85,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								event.ReplyToken,
 								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
-								log.Println("before_USERID:" + usr.LinkUserID)
+
 							}
 
 						}
 					}
-
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
+							log.Println("before_USERID:" + usr.LinkUserID)
 							_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
 							if err != nil {
 								log.Println("exec failed:", err)
@@ -101,6 +101,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.LinkUserID = ""
 							usr.Nounce = ""
 							usr.Name = ""
+							return
 						}
 					}
 					return
@@ -109,7 +110,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
 
-					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
+					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
@@ -154,7 +155,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
 
-				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", user.ID)
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
 				if err != nil {
 					panic(err.Error())
 				}
