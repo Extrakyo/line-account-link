@@ -78,6 +78,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 
 						}
+						if _, err = bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("你還沒完成驗證無法取消")).Do(); err != nil {
+							log.Println("err:", err)
+
+						}
 					}
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
