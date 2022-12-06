@@ -69,19 +69,23 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "Un"):
 					for _, usr := range linkedCustomers {
-						if usr.LinkUserID == event.Source.UserID {
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+						// log.Println("USERID:" + usr.userID)
+
+						var ur LinkCustomer
+						for rs.Next() {
+							rs.Scan(&ur.userID)
+						}
+						log.Println("USERID:" + ur.userID)
+						if ur.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
 
-							}
-
-						} else if usr.LinkUserID != event.Source.UserID {
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
-								log.Println("err:", err)
 							}
 
 						}
