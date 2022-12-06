@@ -19,6 +19,7 @@ type CustData struct {
 	PW     string
 	Name   string
 	Nounce string
+	UserId string
 }
 
 var db *sql.DB
@@ -45,14 +46,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	results, err := db.Query("SELECT username, password FROM users WHERE identity = 'customer'")
+	results, err := db.Query("SELECT `username`, `password`, `fname` FROM `users` WHERE `identity` = 'customer'")
 	if err != nil {
 		panic(err.Error())
 	}
 
 	var user CustData
 	for results.Next() {
-		results.Scan(&user.ID, &user.PW)
+		results.Scan(&user.ID, &user.PW, &user.Name)
 		customers = append(customers, user)
 	}
 	//7. The user enters his/her credentials.
@@ -66,32 +67,41 @@ func login(w http.ResponseWriter, r *http.Request) {
 	token := r.FormValue("token")
 
 	PW := MD5(pw)
-	for i, usr := range customers {
+	for _, usr := range customers {
 		if usr.ID == name {
 			if PW == usr.PW {
 				//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 				sNonce := generateNounce(token, name, pw)
-				rs, err := db.Exec("UPDATE `linebot` SET `nounce = ? WHERE = `username` = 'extra'", sNonce)
+				rs, err := db.Exec("UPDATE `linebot` SET `nounce`= ? WHERE `username` = ?", sNonce, usr.ID)
 				if err != nil {
+					log.Println("exec failed:", err)
 					return
 				}
 				idAff, err := rs.RowsAffected()
 				if err != nil {
+					log.Println("RowsAffected failed:", err)
 					return
 				}
 				if idAff == 0 {
-					_, err := db.Exec("INSERT INTO `linebot`(`nounce`) VALUES (?)", sNonce)
+					usr.UserId = ""
+					log.Println("Nounce:" + usr.Nounce + "\nUsername:" + usr.ID + "\nPassword:" + usr.PW + "\nUserId:" + usr.UserId + "\nName:" + usr.Name)
+					rs, err := db.Exec("INSERT INTO `linebot`(`nounce`, `username`, `password`, `userId`, `name`) VALUES (?, ?, ?, ?, ?)", sNonce, usr.ID, usr.PW, usr.UserId, usr.Name)
 					if err != nil {
 						log.Println("exec failed", err)
 					}
+					log.Println(rs)
 				}
 
-				//update nounce to provider DB to store it.
-				customers[i].Nounce = sNonce
+				results, err := db.Query("SELECT `nounce`, `name` FROM linebot WHERE `username` = ?", usr.ID)
+				if err != nil {
+					panic(err.Error())
+				}
 
-				//9. The web server redirects the user to the account-linking endpoint.
-				//10. The user accesses the account-linking endpoint.
-				//Print link to user to click it.
+				for results.Next() {
+					results.Scan(&user.Nounce, &user.Name)
+					customers = append(customers, user)
+				}
+
 				targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
 
 				log.Println("generate nonce, targetURL=", targetURL)
