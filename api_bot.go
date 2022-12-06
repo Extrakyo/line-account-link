@@ -113,7 +113,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						rs.Scan(&ur.userID)
 					}
 
-					if ur.userID == usr.LinkUserID {
+					if ur.userID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
 							linebot.NewTextMessage("你好 "+usr.Name+"，您已成功綁定帳號！")).Do(); err != nil {
@@ -157,7 +157,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					rs.Scan(&urd.userID)
 				}
 
-				if urd.userID == user.LinkUserID {
+				if urd.userID == event.Source.UserID {
 					log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
 					return
 				}
