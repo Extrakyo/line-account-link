@@ -54,13 +54,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//2. The LINE Platform returns the link token to the bot server.
 
 					for _, usr := range linkedCustomers {
-						USERID := event.Source.UserID
-						_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", USERID, usr.ID)
-						if err != nil {
-							log.Println("exec failed:", err)
-							return
-						}
-						log.Println("userID:" + USERID)
+
 						res, err := bot.IssueLinkToken(userID).Do()
 
 						if err != nil {
@@ -75,6 +69,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 							log.Println("err:", err)
 						}
+
+						USERID := event.Source.UserID
+						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", USERID, usr.ID)
+						if err != nil {
+							log.Println("exec failed:", err)
+							return
+						}
+						log.Println(rs)
+						log.Println("userID:" + USERID)
 					}
 
 				case strings.EqualFold(message.Text, "#2"):
