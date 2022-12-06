@@ -53,23 +53,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
 
+					res, err := bot.IssueLinkToken(userID).Do()
+
+					if err != nil {
+						log.Println("Issue link token error, err=", err)
+					}
+					log.Println("Get user token:", res.LinkToken)
+
+					//3. The bot server calls the Messaging API to send a linking URL to the user.
+					//4. The LINE Platform sends a linking URL to the user.
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+						log.Println("err:", err)
+					}
+
 					for _, usr := range linkedCustomers {
-
-						res, err := bot.IssueLinkToken(userID).Do()
-
-						if err != nil {
-							log.Println("Issue link token error, err=", err)
-						}
-						log.Println("Get user token:", res.LinkToken)
-
-						//3. The bot server calls the Messaging API to send a linking URL to the user.
-						//4. The LINE Platform sends a linking URL to the user.
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
-							log.Println("err:", err)
-						}
-
 						USERID := event.Source.UserID
 						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", USERID, usr.ID)
 						if err != nil {
