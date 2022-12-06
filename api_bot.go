@@ -66,17 +66,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
-					}
-
-					for _, usr := range linkedCustomers {
-						USERID := event.Source.UserID
-						rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
-						if err != nil {
-							log.Println("exec failed:", err)
-							return
+						for _, usr := range linkedCustomers {
+							USERID := event.Source.UserID
+							rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
+							if err != nil {
+								log.Println("exec failed:", err)
+								return
+							}
+							log.Println(rs)
+							log.Println("userID:" + USERID)
 						}
-						log.Println(rs)
-						log.Println("userID:" + USERID)
 					}
 
 				case strings.EqualFold(message.Text, "#2"):
