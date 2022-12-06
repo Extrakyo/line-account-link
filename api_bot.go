@@ -87,11 +87,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("err:", err)
 
 							}
-
-						}
-					}
-					for _, usr := range linkedCustomers {
-						if usr.LinkUserID == event.Source.UserID {
 							log.Println("before_USERID:" + usr.LinkUserID)
 							_, err := db.Exec("DELETE FROM `linebot` WHERE `username` = ?", usr.ID)
 							if err != nil {
@@ -102,15 +97,21 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.Nounce = ""
 							usr.Name = ""
 							return
+
 						}
 					}
-					return
+					// for _, usr := range linkedCustomers {
+					// 	if usr.LinkUserID == event.Source.UserID {
+
+					// 	}
+					// }
+					// return
 				}
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
 
-					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
