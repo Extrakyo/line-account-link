@@ -196,7 +196,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						results.Scan(&linkedUser.ID, &linkedUser.Nounce, &linkedUser.LinkUserID, &linkedUser.Name)
 						linkedCustomers = append(linkedCustomers, linkedUser)
 					}
-					log.Println("Username:" + linkedUser.LinkUserID + "\nNounce:" + linkedUser.Nounce + "\nUserId:" + linkedUser.LinkUserID + "\nUsername:" + linkedUser.Name)
+					log.Println("Username:" + linkedUser.ID + "\nNounce:" + linkedUser.Nounce + "\nUserId:" + linkedUser.LinkUserID + "\nName:" + linkedUser.Name)
 
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
