@@ -69,7 +69,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#2"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -92,6 +92,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
+
 							log.Println("before_USERID:" + usr.LinkUserID)
 							_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
 							if err != nil {
@@ -102,8 +103,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.LinkUserID = ""
 							usr.Nounce = ""
 							usr.Name = ""
-							// log.Println("USERID:" + usr.LinkUserID)
-							// log.Println("Source_UserId:" + event.Source.UserID)
 							return
 						}
 					}
@@ -113,7 +112,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
 
-					rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
 					if err != nil {
 						panic(err.Error())
 					}
@@ -121,14 +120,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					var ur LinkCustomer
 					for rs.Next() {
-						rs.Scan(&ur.userID)
+						rs.Scan(&ur.userID, &ur.Name)
 					}
 					log.Println("USERID:" + ur.userID)
 
 					if ur.userID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+usr.Name+"，您已成功綁定帳號！")).Do(); err != nil {
+							linebot.NewTextMessage("你好 "+ur.Name+"，您已成功綁定帳號！")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
