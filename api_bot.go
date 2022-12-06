@@ -85,7 +85,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							panic(err.Error())
 						}
-						// log.Println("USERID:" + usr.userID)
 
 						var ur LinkCustomer
 						for rs.Next() {
@@ -191,7 +190,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 
-					results, err := db.Query("SELECT `userId`, `nounce`, `name` , `username` FROM linebot WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `userId`, `nounce`, `name` , `username` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
