@@ -157,7 +157,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
 
-				rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", user.Nounce)
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", user.ID)
 				if err != nil {
 					panic(err.Error())
 				}
@@ -165,11 +165,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				var urd LinkCustomer
 				for rs.Next() {
-					rs.Scan(&urd.userID)
+					rs.Scan(&urd.userID, &urd.Name)
 				}
 
 				if urd.userID == event.Source.UserID {
-					log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
+					log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
 					return
 				}
 			}
