@@ -112,7 +112,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					for rs.Next() {
 						rs.Scan(&ur.userID)
 					}
-					log.Println("USERID_df:" + ur.userID)
 
 					if ur.userID == usr.LinkUserID {
 						if _, err = bot.ReplyMessage(
@@ -157,7 +156,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				for rs.Next() {
 					rs.Scan(&ur.userID)
 				}
-				log.Println("USERID_df:" + ur.userID)
 
 				if ur.userID == user.LinkUserID {
 					log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
