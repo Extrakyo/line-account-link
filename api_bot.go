@@ -52,19 +52,29 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
 					//2. The LINE Platform returns the link token to the bot server.
-					res, err := bot.IssueLinkToken(userID).Do()
 
-					if err != nil {
-						log.Println("Issue link token error, err=", err)
-					}
-					log.Println("Get user token:", res.LinkToken)
+					for _, usr := range linkedCustomers {
+						USERID := event.Source.UserID
+						_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", USERID, usr.ID)
+						if err != nil {
+							log.Println("exec failed:", err)
+							return
+						}
+						log.Println("userID:" + USERID)
+						res, err := bot.IssueLinkToken(userID).Do()
 
-					//3. The bot server calls the Messaging API to send a linking URL to the user.
-					//4. The LINE Platform sends a linking URL to the user.
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
-						log.Println("err:", err)
+						if err != nil {
+							log.Println("Issue link token error, err=", err)
+						}
+						log.Println("Get user token:", res.LinkToken)
+
+						//3. The bot server calls the Messaging API to send a linking URL to the user.
+						//4. The LINE Platform sends a linking URL to the user.
+						if _, err = bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
+							log.Println("err:", err)
+						}
 					}
 
 				case strings.EqualFold(message.Text, "#2"):
@@ -178,13 +188,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
-					USERID := event.Source.UserID
-					_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
-					if err != nil {
-						log.Println("exec failed:", err)
-						return
-					}
-					log.Println("userID:" + USERID)
 
 					results, err := db.Query("SELECT `userId`, `nounce`, `name` , `username` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
