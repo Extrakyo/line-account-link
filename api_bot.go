@@ -69,7 +69,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#2"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -85,26 +85,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								event.ReplyToken,
 								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
-
-							}
-
-						}
-
-						// for _, usr := range linkedCustomers {
-						if usr.LinkUserID == event.Source.UserID {
-
-							log.Println("before_USERID:" + usr.LinkUserID)
-							_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
-							if err != nil {
-								log.Println("exec failed:", err)
+								log.Println("before_USERID:" + usr.LinkUserID)
+								_, err := db.Exec("DELETE FROM `linebot` WHERE `userId` = ?", usr.LinkUserID)
+								if err != nil {
+									log.Println("exec failed:", err)
+									return
+								}
+								usr.LinkUserID = ""
+								usr.Nounce = ""
+								usr.Name = ""
 								return
+
 							}
 
-							usr.LinkUserID = ""
-							usr.Nounce = ""
-							usr.Name = ""
-							return
 						}
+						// for _, usr := range linkedCustomers {
+
 					}
 					return
 				}
