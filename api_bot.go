@@ -152,12 +152,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				// log.Println("USERID:" + usr.)
 
-				var ur LinkCustomer
+				var urd LinkCustomer
 				for rs.Next() {
-					rs.Scan(&ur.userID)
+					rs.Scan(&urd.userID)
 				}
 
-				if ur.userID == user.LinkUserID {
+				if urd.userID == user.LinkUserID {
 					log.Println("使用者： ", user.Name, " 的帳號已被綁定！")
 					return
 				}
