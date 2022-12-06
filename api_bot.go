@@ -186,7 +186,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println(rsd)
 					log.Println("userID:" + USERID)
 
-					results, err := db.Query("SELECT `username`, `nounce`, `userId`, `name` FROM `linebot` WHERE `username` = ?", usr.ID)
+					results, err := db.Query("SELECT `username`, `nounce`, `userId`, `name` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
