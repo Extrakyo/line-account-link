@@ -22,7 +22,7 @@ type CustData struct {
 	UserId string
 }
 
-var db *sql.DB
+// var db *sql.DB
 var customers []CustData
 
 func init() {

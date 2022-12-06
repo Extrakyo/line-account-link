@@ -89,8 +89,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 
 						}
-					}
-					for _, usr := range linkedCustomers {
+
+						// for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
 
 							log.Println("before_USERID:" + usr.LinkUserID)
