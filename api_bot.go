@@ -147,7 +147,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
-						if usr.LinkUserID == event.Source.UserID {
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+						if err != nil {
+							panic(err.Error())
+						}
+
+						var ur LinkCustomer
+						for rs.Next() {
+							rs.Scan(&ur.userID)
+						}
+						if ur.userID == event.Source.UserID {
 
 							rows, err := db.Query("SELECT `fullName`, `discountType`, `totalPrice` FROM `orderList` WHERE `username` = ? AND `orderStatus` = 'isReceived'", usr.ID)
 							if err != nil {
