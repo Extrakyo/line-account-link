@@ -205,8 +205,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			//11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
 			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			for _, usr := range linkedCustomers {
-				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+			for _, user := range linkedCustomers {
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", user.ID)
 				if err != nil {
 					panic(err.Error())
 				}
@@ -215,11 +215,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var ur LinkCustomer
 				for rs.Next() {
 					rs.Scan(&ur.userID, &ur.Name)
-				}
 
-				if event.Source.UserID == ur.userID {
-					log.Println("User:", ur.Name, " already linked account.")
-					return
+					if event.Source.UserID == ur.userID {
+						log.Println("User:", ur.Name, " already linked account.")
+						return
+					}
 				}
 			}
 
