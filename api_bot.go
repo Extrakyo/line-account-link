@@ -149,15 +149,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
 
-							results, err := db.Query("SELECT `fullName`, `discountType`, `totalPrice` FROM `orderList` WHERE `username` = ? AND `orderStatus` = 'isReceived'", usr.ID)
+							rows, err := db.Query("SELECT `fullName`, `discountType`, `totalPrice` FROM `orderList` WHERE `username` = ? AND `orderStatus` = 'isReceived'", usr.ID)
 							if err != nil {
 								panic(err.Error())
 							}
 							var order LinkCustomer
-							for results.Next() {
-								err = results.Scan(&order.fullName, &order.discountType, &order.totalPrice)
+							for rows.Next() {
+								scanErr := rows.Scan(&order.fullName, &order.discountType, &order.totalPrice)
 								log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
-								if err != nil {
+								if scanErr != nil {
 									if _, err = bot.ReplyMessage(
 										event.ReplyToken,
 										linebot.NewTextMessage("查無訂單")).Do(); err != nil {
@@ -165,12 +165,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									}
 								}
 								linkedCustomers = append(linkedCustomers, order)
+								if _, err = bot.ReplyMessage(
+									event.ReplyToken,
+									linebot.NewTextMessage("Name:"+order.fullName)).Do(); err != nil {
+									log.Println("err:", err)
+								}
 							}
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("Name:"+order.fullName)).Do(); err != nil {
-								log.Println("err:", err)
-							}
+						}
+						if _, err = bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("還未驗證")).Do(); err != nil {
+							log.Println("err:", err)
 						}
 					}
 				}
