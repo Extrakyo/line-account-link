@@ -158,11 +158,19 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								results.Scan(&order.fullName, &order.discountType, &order.totalPrice)
 							}
 							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("訂單人:"+order.fullName+"\n付款類型:"+order.discountType+"\n總金額:"+order.totalPrice)).Do(); err != nil {
-								log.Println("err:", err)
+							if results.Scan() == nil {
+								if _, err = bot.ReplyMessage(
+									event.ReplyToken,
+									linebot.NewTextMessage("查無訂單")).Do(); err != nil {
+									log.Println("err:", err)
 
+								}
+								if _, err = bot.ReplyMessage(
+									event.ReplyToken,
+									linebot.NewTextMessage("訂單人:"+order.fullName+"\n付款類型:"+order.discountType+"\n總金額:"+order.totalPrice)).Do(); err != nil {
+									log.Println("err:", err)
+
+								}
 							}
 
 						}
