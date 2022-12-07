@@ -154,17 +154,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 							var order LinkCustomer
 							for rows.Next() {
-								scanErr := rows.Scan(&order.fullName, &order.discountType, &order.totalPrice)
-								log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
-								if scanErr != nil {
-									if _, err = bot.ReplyMessage(
-										event.ReplyToken,
-										linebot.NewTextMessage("查無訂單")).Do(); err != nil {
-										log.Println("err:", err)
-									}
-								}
-								linkedCustomers = append(linkedCustomers, order)
+								rows.Scan(&order.fullName, &order.discountType, &order.totalPrice)
 							}
+							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("Name:"+order.fullName+"DisscountType"+order.discountType+"TotalPrice"+order.totalPrice)).Do(); err != nil {
