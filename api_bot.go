@@ -160,7 +160,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
-								linebot.NewTextMessage("FullName:"+order.fullName+"\nDisscountType:"+order.discountType+"\nTotalPrice:"+order.totalPrice)).Do(); err != nil {
+								linebot.NewTextMessage("訂單人:"+order.fullName+"\n付款類型:"+order.discountType+"\n總金額:"+order.totalPrice)).Do(); err != nil {
 								log.Println("err:", err)
 
 							}
