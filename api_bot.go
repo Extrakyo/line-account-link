@@ -126,7 +126,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#qeb"):
 					for _, usr := range linkedCustomers {
-
 						if usr.LinkUserID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
@@ -144,7 +143,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								return
 							}
 						}
-						log.Println("dd")
 					}
 
 				case strings.EqualFold(message.Text, "#order"):
@@ -166,17 +164,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									}
 								}
 								linkedCustomers = append(linkedCustomers, order)
-								if _, err = bot.ReplyMessage(
-									event.ReplyToken,
-									linebot.NewTextMessage("Name:"+order.fullName)).Do(); err != nil {
-									log.Println("err:", err)
-								}
 							}
-						}
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("還未驗證")).Do(); err != nil {
-							log.Println("err:", err)
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("Name:"+order.fullName+"DisscountType"+order.discountType+"TotalPrice"+order.totalPrice)).Do(); err != nil {
+								log.Println("err:", err)
+							}
 						}
 					}
 				}
