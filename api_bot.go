@@ -150,15 +150,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					for _, usr := range linkedCustomers {
 						if usr.LinkUserID == event.Source.UserID {
 
-							results, err := db.Query("SELECT `fullName`, `discountType`, `totalPrice`, `needData` FROM `orderList` WHERE `username` = ? AND `orderStatus` = `isReceived`", usr.ID)
+							results, err := db.Query("SELECT `fullName`, `discountType`, `totalPrice` FROM `orderList` WHERE `username` = ? AND `orderStatus` = `isReceived`", usr.ID)
 							if err != nil {
 								panic(err.Error())
 							}
 							var order LinkCustomer
 							for results.Next() {
-								results.Scan(&order.fullName, &order.discountType, &order.totalPrice, &order.needData)
+								results.Scan(&order.fullName, &order.discountType, &order.totalPrice)
 							}
-							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice + "NeedData:" + order.needData)
+							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
 
 						}
 					}
