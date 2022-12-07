@@ -159,7 +159,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
-								linebot.NewTextMessage("Name:"+order.fullName+"DisscountType"+order.discountType+"TotalPrice"+order.totalPrice)).Do(); err != nil {
+								linebot.NewTextMessage("Name:"+order.fullName+"\nDisscountType"+order.discountType+"\nTotalPrice"+order.totalPrice)).Do(); err != nil {
 								log.Println("err:", err)
 							}
 						}
