@@ -204,20 +204,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		} else if event.Type == linebot.EventTypeAccountLink {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
-				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
-				if err != nil {
-					panic(err.Error())
-				}
-				// log.Println("USERID:" + usr.)
+				if user.LinkUserID == event.Source.UserID {
+					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
+					if err != nil {
+						panic(err.Error())
+					}
+					// log.Println("USERID:" + usr.)
 
-				var urd LinkCustomer
-				for rs.Next() {
-					rs.Scan(&urd.userID, &urd.Name)
-				}
+					var urd LinkCustomer
+					for rs.Next() {
+						rs.Scan(&urd.userID, &urd.Name)
+					}
 
-				if urd.userID == event.Source.UserID {
-					log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
-					return
+					if urd.userID == event.Source.UserID {
+						log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
+						return
+					}
 				}
 			}
 
