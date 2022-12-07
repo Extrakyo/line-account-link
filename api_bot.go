@@ -22,7 +22,6 @@ type LinkCustomer struct {
 	fullName     string
 	discountType string
 	totalPrice   string
-	needData     string
 }
 
 var linkedCustomers []LinkCustomer
@@ -159,6 +158,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								results.Scan(&order.fullName, &order.discountType, &order.totalPrice)
 							}
 							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("FullName:"+order.fullName+"\nDisscountType:"+order.discountType+"\nTotalPrice:"+order.totalPrice)).Do(); err != nil {
+								log.Println("err:", err)
+
+							}
 
 						}
 					}
