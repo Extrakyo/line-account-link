@@ -203,13 +203,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			for _, usr := range linkedCustomers {
-				if usr.LinkUserID == event.Source.UserID {
-					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+			for _, user := range linkedCustomers {
+				rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", user.ID)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				var ur LinkCustomer
+				for rs.Next() {
+					rs.Scan(&ur.userID)
+				}
+				if ur.userID == event.Source.UserID {
+					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
-					// log.Println("USERID:" + usr.)
+					log.Println("NOUNCE:" + user.Nounce)
 
 					var urd LinkCustomer
 					for rs.Next() {
