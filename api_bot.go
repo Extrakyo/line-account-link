@@ -177,28 +177,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
-					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
-					if err != nil {
-						panic(err.Error())
-					}
-					// log.Println("USERID:" + usr.userID)
-
-					var ur LinkCustomer
-					for rs.Next() {
-						rs.Scan(&ur.userID, &ur.Name)
-					}
-					log.Println("USERID:" + ur.userID)
-
-					if ur.userID == event.Source.UserID {
+					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("你好 "+ur.Name+"，您已成功綁定帳號！")).Do(); err != nil {
+							linebot.NewTextMessage("Hi "+usr.Name+"!")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
 						return
 					}
 				}
+
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
