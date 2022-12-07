@@ -202,33 +202,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
+			//11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
+			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
-				rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", user.ID)
-				if err != nil {
-					panic(err.Error())
-				}
-
-				var ur LinkCustomer
-				for rs.Next() {
-					rs.Scan(&ur.userID)
-				}
-				if ur.userID == event.Source.UserID {
-					rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
-					if err != nil {
-						panic(err.Error())
-					}
-					log.Println("NOUNCE:" + user.Nounce)
-
-					var urd LinkCustomer
-					for rs.Next() {
-						rs.Scan(&urd.userID, &urd.Name)
-					}
-
-					if urd.userID == event.Source.UserID {
-						log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
-						return
-					}
+				if event.Source.UserID == user.LinkUserID {
+					log.Println("User:", user.Name, " already linked account.")
+					return
 				}
 			}
 
