@@ -147,17 +147,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
-						if err != nil {
-							panic(err.Error())
-						}
-
-						var ur LinkCustomer
-						for rs.Next() {
-							rs.Scan(&ur.userID)
-						}
-						if ur.userID == event.Source.UserID {
-
+						if usr.LinkUserID == event.Source.UserID {
+							log.Println("ORDER_USERID" + usr.LinkUserID)
 							rows, err := db.Query("SELECT `fullName`, `discountType`, `totalPrice` FROM `orderList` WHERE `username` = ? AND `orderStatus` = 'isReceived'", usr.ID)
 							if err != nil {
 								panic(err.Error())
@@ -180,11 +171,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									log.Println("err:", err)
 								}
 							}
-						}
-						if _, err = bot.ReplyMessage(
-							event.ReplyToken,
-							linebot.NewTextMessage("還未驗證")).Do(); err != nil {
-							log.Println("err:", err)
 						}
 					}
 				}
