@@ -126,35 +126,25 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#qeb"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
-						if err != nil {
-							panic(err.Error())
-						}
 
-						var ur LinkCustomer
-						for rs.Next() {
-							rs.Scan(&ur.userID)
-
-							log.Println("USERID:" + ur.userID)
-							if ur.LinkUserID == event.Source.UserID {
-								if _, err = bot.ReplyMessage(
-									event.ReplyToken,
-									linebot.NewTextMessage("查詢訂單").
-										WithQuickReplies(linebot.NewQuickReplyItems(
-											linebot.NewQuickReplyButton(
-												"",
-												linebot.NewMessageAction("訂單", "#order")),
-											// linebot.NewQuickReplyButton(
-											// 	"",
-											// 	linebot.NewMessageAction("解除綁定", "#Unlink")),
-										)),
-								).Do(); err != nil {
-									log.Println("err:", err)
-									return
-								}
+						if usr.LinkUserID == event.Source.UserID {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("查詢訂單").
+									WithQuickReplies(linebot.NewQuickReplyItems(
+										linebot.NewQuickReplyButton(
+											"",
+											linebot.NewMessageAction("訂單", "#order")),
+										// linebot.NewQuickReplyButton(
+										// 	"",
+										// 	linebot.NewMessageAction("解除綁定", "#Unlink")),
+									)),
+							).Do(); err != nil {
+								log.Println("err:", err)
+								return
 							}
-							log.Println("dd")
 						}
+						log.Println("dd")
 					}
 
 				case strings.EqualFold(message.Text, "#order"):
@@ -216,6 +206,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
+				for _, usr := range linkedCustomers {
+					rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+					if err != nil {
+						panic(err.Error())
+					}
+
+					var ur LinkCustomer
+					for rs.Next() {
+						rs.Scan(&ur.userID)
+					}
+				}
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
