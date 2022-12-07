@@ -177,6 +177,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				//Check user if it is linked.
 				for _, usr := range linkedCustomers {
+					rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+					if err != nil {
+						panic(err.Error())
+					}
+
+					var ur LinkCustomer
+					for rs.Next() {
+						rs.Scan(&ur.userID)
+					}
 					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
@@ -187,7 +196,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 				}
-
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
