@@ -155,25 +155,24 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 							var order LinkCustomer
 							for results.Next() {
-								results.Scan(&order.fullName, &order.discountType, &order.totalPrice)
-							}
-							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
-							if results.Scan() == nil {
-								if _, err = bot.ReplyMessage(
-									event.ReplyToken,
-									linebot.NewTextMessage("查無訂單")).Do(); err != nil {
-									log.Println("err:", err)
-
+								err = results.Scan(&order.fullName, &order.discountType, &order.totalPrice)
+								log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
+								if err != nil {
+									if _, err = bot.ReplyMessage(
+										event.ReplyToken,
+										linebot.NewTextMessage("查無訂單")).Do(); err != nil {
+										log.Println("err:", err)
+									}
 								}
-								if _, err = bot.ReplyMessage(
-									event.ReplyToken,
-									linebot.NewTextMessage("訂單人:"+order.fullName+"\n付款類型:"+order.discountType+"\n總金額:"+order.totalPrice)).Do(); err != nil {
-									log.Println("err:", err)
-
-								}
+								linkedCustomers = append(linkedCustomers, order)
 							}
-
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("Name:"+order.fullName)).Do(); err != nil {
+								log.Println("err:", err)
+							}
 						}
+
 					}
 				}
 
