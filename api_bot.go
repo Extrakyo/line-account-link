@@ -119,6 +119,27 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("err:", err)
 						return
 					}
+
+				case strings.EqualFold(message.Text, "#qeb"):
+					for _, usr := range linkedCustomers {
+						if usr.LinkUserID == event.Source.UserID {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("查詢訂單").
+									WithQuickReplies(linebot.NewQuickReplyItems(
+										linebot.NewQuickReplyButton(
+											"",
+											linebot.NewMessageAction("訂單", "#order")),
+										// linebot.NewQuickReplyButton(
+										// 	"",
+										// 	linebot.NewMessageAction("解除綁定", "#Unlink")),
+									)),
+							).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
+						}
+					}
 				}
 
 				//Check user if it is linked.
@@ -146,22 +167,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 				log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
-
-				// if _, err = bot.ReplyMessage(
-				// 	event.ReplyToken,
-				// 	linebot.NewTextMessage("歡迎使用Foodler BOT，請先綁定帳號，以使用完整功能！").
-				// 		WithQuickReplies(linebot.NewQuickReplyItems(
-				// 			linebot.NewQuickReplyButton(
-				// 				"",
-				// 				linebot.NewMessageAction("綁定帳號", "#1")),
-				// 			// linebot.NewQuickReplyButton(
-				// 			// 	"",
-				// 			// 	linebot.NewMessageAction("list user", "Un")),
-				// 		)),
-				// ).Do(); err != nil {
-				// 	log.Println("err:", err)
-				// 	return
-				// }
 			}
 		} else if event.Type == linebot.EventTypeAccountLink {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
