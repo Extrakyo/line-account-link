@@ -205,9 +205,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			//11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
 			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			for _, user := range linkedCustomers {
-				if event.Source.UserID == user.LinkUserID {
-					log.Println("User:", user.Name, " already linked account.")
+			for _, usr := range linkedCustomers {
+				if event.Source.UserID == usr.LinkUserID {
+					log.Println("USERID_1" + usr.LinkUserID)
+					log.Println("User:", usr.Name, " already linked account.")
 					return
 				}
 			}
