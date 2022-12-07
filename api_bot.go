@@ -215,6 +215,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					var ur LinkCustomer
 					for rs.Next() {
 						rs.Scan(&ur.userID)
+						linkedCustomers = append(linkedCustomers, ur)
 					}
 				}
 			}
