@@ -206,9 +206,19 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, usr := range linkedCustomers {
-				if event.Source.UserID == usr.LinkUserID {
-					log.Println("USERID_1" + usr.LinkUserID)
-					log.Println("User:", usr.Name, " already linked account.")
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+				if err != nil {
+					panic(err.Error())
+				}
+				// log.Println("USERID:" + usr.userID)
+
+				var ur LinkCustomer
+				for rs.Next() {
+					rs.Scan(&ur.userID, &ur.Name)
+				}
+
+				if event.Source.UserID == ur.userID {
+					log.Println("User:", ur.Name, " already linked account.")
 					return
 				}
 			}
