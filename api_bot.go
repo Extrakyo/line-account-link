@@ -32,25 +32,6 @@ type OrderList struct {
 var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
-
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-	for _, usr := range customers {
-		results, err := db.Query("SELECT `username`, `nounce`, `userId`, `name` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
-		if err != nil {
-			panic(err.Error())
-		}
-
-		var linkedUser LinkCustomer
-		for results.Next() {
-			results.Scan(&linkedUser.ID, &linkedUser.Nounce, &linkedUser.LinkUserID, &linkedUser.Name)
-			linkedCustomers = append(linkedCustomers, linkedUser)
-		}
-	}
-
 	events, err := bot.ParseRequest(r)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
@@ -60,7 +41,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
+	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
 			switch message := event.Message.(type) {
@@ -302,6 +287,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
+
 		} else if event.Type == linebot.EventTypeAccountLink {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
@@ -314,6 +300,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var urd LinkCustomer
 				for rs.Next() {
 					rs.Scan(&urd.userID, &urd.Name)
+					linkedCustomers = append(linkedCustomers, urd)
 				}
 
 				if urd.userID == event.Source.UserID {
