@@ -33,10 +33,24 @@ var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := sql.Open("mysql", "canis:vz3s10cdDtkU1BRv@tcp(103.200.113.92)/foodler")
+
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
+	for _, usr := range customers {
+		results, err := db.Query("SELECT `username`, `nounce`, `userId`, `name` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		var linkedUser LinkCustomer
+		for results.Next() {
+			results.Scan(&linkedUser.ID, &linkedUser.Nounce, &linkedUser.LinkUserID, &linkedUser.Name)
+			linkedCustomers = append(linkedCustomers, linkedUser)
+		}
+	}
+
 	events, err := bot.ParseRequest(r)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
