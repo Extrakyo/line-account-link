@@ -109,7 +109,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.Name = ""
 							return
 
+						} else {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("還未綁定無法取消").
+									WithQuickReplies(linebot.NewQuickReplyItems(
+										linebot.NewQuickReplyButton(
+											"",
+											linebot.NewMessageAction("訂單", "#order")),
+									)),
+							).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
+
 						}
+
 					}
 
 				case strings.EqualFold(message.Text, "#qeb"):
@@ -138,7 +153,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("err:", err)
 								return
 							}
+						} else {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("你還未驗證帳號").
+									WithQuickReplies(linebot.NewQuickReplyItems(
+										linebot.NewQuickReplyButton(
+											"",
+											linebot.NewMessageAction("訂單", "#order")),
+									)),
+							).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
+
 						}
+
 					}
 
 				case strings.EqualFold(message.Text, "#order"):
@@ -157,7 +187,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						log.Println("USERID:" + ur.userID)
 						if ur.userID == event.Source.UserID {
-
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
@@ -189,7 +218,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								} else {
 									Doc = Doc + "\n\n店家：" + or.brandName + "\n訂單狀態：" + or.orderStatus + "\n訂購人：" + or.fullName + "\n總金額：NT# " + or.totalPrice
 								}
-
 							}
 							log.Println(Doc)
 							if _, err = bot.ReplyMessage(
@@ -199,6 +227,20 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								return
 							}
 							return
+						} else {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("你還未驗證帳號").
+									WithQuickReplies(linebot.NewQuickReplyItems(
+										linebot.NewQuickReplyButton(
+											"",
+											linebot.NewMessageAction("訂單", "#order")),
+									)),
+							).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
+
 						}
 					}
 
