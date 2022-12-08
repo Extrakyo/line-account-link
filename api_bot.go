@@ -165,6 +165,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								var or OrderList
 								//取得店家名稱
 								rs.Scan(&or.brandId, &or.orderStatus, &or.fullName, &or.totalPrice)
+
+								if or.orderStatus == "isReceived" {
+									or.orderStatus = "已接收"
+								} else {
+									or.orderStatus = "準備中"
+								}
+
 								res, err := db.Query("SELECT `brandName` FROM `ownerDetails` WHERE `brandId` = ?", or.brandId)
 								if err != nil {
 									panic(err.Error())
