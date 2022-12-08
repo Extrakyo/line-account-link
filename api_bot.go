@@ -46,7 +46,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	for _, usr := range linkedCustomers {
+		rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
+		if err != nil {
+			panic(err.Error())
+		}
 
+		var ur LinkCustomer
+		for rs.Next() {
+			rs.Scan(&ur.userID)
+		}
+	}
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
 			switch message := event.Message.(type) {
@@ -116,7 +126,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									WithQuickReplies(linebot.NewQuickReplyItems(
 										linebot.NewQuickReplyButton(
 											"",
-											linebot.NewMessageAction("訂單", "#order")),
+											linebot.NewMessageAction("綁定帳號", "#link")),
 									)),
 							).Do(); err != nil {
 								log.Println("err:", err)
