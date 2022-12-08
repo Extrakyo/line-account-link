@@ -18,12 +18,17 @@ type LinkCustomer struct {
 	Nounce     string
 	LinkUserID string
 	userID     string
-
-	fullName     string
-	discountType string
-	totalPrice   string
+}
+type OrderList struct {
+	//Data from CustData from provider.
+	brandId     string
+	orderStatus string
+	fullName    string
+	totalPrice  string
+	brandName   string
 }
 
+var orderLists []OrderList
 var linkedCustomers []LinkCustomer
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -138,7 +143,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -149,20 +154,27 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						log.Println("USERID:" + ur.userID)
 						if ur.userID == event.Source.UserID {
-							rows, err := db.Query("SELECT `fullName`, `discountType`, `totalPrice` FROM `orderList` WHERE `username` = ? AND `orderStatus` = 'isReceived'", usr.ID)
+
+							//取得訂單資料
+							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
 								panic(err.Error())
 							}
-							var order LinkCustomer
-							for rows.Next() {
-								rows.Scan(&order.fullName, &order.discountType, &order.totalPrice)
+
+							for rs.Next() {
+								var or OrderList
+								//取得店家名稱
+								rs.Scan(&or.brandId, &or.orderStatus, &or.fullName, &or.totalPrice)
+								res, err := db.Query("SELECT `brandName` FROM `ownerDetails` WHERE `brandId` = ?", or.brandId)
+								if err != nil {
+									panic(err.Error())
+								}
+								for res.Next() {
+									res.Scan(&or.brandName)
+								}
+								log.Println("店家：" + or.brandName + "\n訂單狀態：" + or.orderStatus + "\n訂購人：" + or.fullName + "\n總金額：" + or.totalPrice)
 							}
-							log.Println("FullName:" + order.fullName + "DisscountType:" + order.discountType + "TotalPrice:" + order.totalPrice)
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("訂單人:"+order.fullName+"\n訂單類型:"+order.discountType+"\n總金額:"+order.totalPrice)).Do(); err != nil {
-								log.Println("err:", err)
-							}
+
 						}
 					}
 
