@@ -37,18 +37,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 	defer db.Close()
-	for _, usr := range linkedCustomers {
-		rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
-		if err != nil {
-			panic(err.Error())
-		}
-
-		var ur LinkCustomer
-		for rs.Next() {
-			rs.Scan(&ur.userID)
-			linkedCustomers = append(linkedCustomers, ur)
-		}
-	}
 	events, err := bot.ParseRequest(r)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
