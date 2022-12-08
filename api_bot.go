@@ -74,15 +74,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
-						for _, usr := range customers {
-							USERID := event.Source.UserID
-							_, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", USERID, usr.ID)
-							if err != nil {
-								log.Println("exec failed:", err)
-								return
-							}
-							log.Println("userID:" + USERID)
-						}
 
 					}
 
@@ -298,30 +289,38 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else if event.Type == linebot.EventTypeAccountLink {
-			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			for _, user := range linkedCustomers {
-				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
-				if err != nil {
-					panic(err.Error())
-				}
-				// log.Println("USERID:" + usr.)
+			// log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
+			// for _, user := range linkedCustomers {
+			// 	rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
+			// 	if err != nil {
+			// 		panic(err.Error())
+			// 	}
+			// 	// log.Println("USERID:" + usr.)
 
-				var urd LinkCustomer
-				for rs.Next() {
-					rs.Scan(&urd.userID, &urd.Name)
-				}
+			// 	var urd LinkCustomer
+			// 	for rs.Next() {
+			// 		rs.Scan(&urd.userID, &urd.Name)
+			// 	}
 
-				if urd.userID == event.Source.UserID {
-					log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
-					return
-				}
-			}
+			// 	if urd.userID == event.Source.UserID {
+			// 		log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
+			// 		return
+			// 	}
+			// }
 
 			//search from all user using nounce.
 			for _, usr := range customers {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
+					USERID := event.Source.UserID
+					rsd, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
+					if err != nil {
+						log.Println("exec failed:", err)
+						return
+					}
+					log.Println(rsd)
+					log.Println("userID:" + USERID)
 
 					results, err := db.Query("SELECT `username`, `nounce`, `userId`, `name` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
