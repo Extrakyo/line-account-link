@@ -234,7 +234,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									WithQuickReplies(linebot.NewQuickReplyItems(
 										linebot.NewQuickReplyButton(
 											"",
-											linebot.NewMessageAction("訂單", "#order")),
+											linebot.NewMessageAction("綁定帳號", "#link")),
 									)),
 							).Do(); err != nil {
 								log.Println("err:", err)
