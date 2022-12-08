@@ -100,7 +100,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 					results.Scan(&user.Nounce)
 					customers = append(customers, user)
 				}
+				for _, usr := range linkedCustomers {
+					rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
+					if err != nil {
+						panic(err.Error())
+					}
 
+					var ur LinkCustomer
+					for rs.Next() {
+						rs.Scan(&ur.userID)
+					}
+				}
 				targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
 
 				log.Println("generate nonce, targetURL=", targetURL)
