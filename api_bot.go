@@ -192,7 +192,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 							}
 							log.Println(Doc)
-
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage(Doc)).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
+							return
 						}
 					}
 
