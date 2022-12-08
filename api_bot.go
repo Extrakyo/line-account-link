@@ -117,9 +117,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 										linebot.NewQuickReplyButton(
 											"",
 											linebot.NewMessageAction("訂單", "#order")),
-										// linebot.NewQuickReplyButton(
-										// 	"",
-										// 	linebot.NewMessageAction("解除綁定", "#Unlink")),
 									)),
 							).Do(); err != nil {
 								log.Println("err:", err)
