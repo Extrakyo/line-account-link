@@ -182,7 +182,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								for res.Next() {
 									res.Scan(&or.brandName)
 								}
-								log.Println("店家：" + or.brandName + "\n訂單狀態：" + or.orderStatus + "\n訂購人：" + or.fullName + "\n總金額：NT# " + or.totalPrice)
+								// log.Println("店家：" + or.brandName + "\n訂單狀態：" + or.orderStatus + "\n訂購人：" + or.fullName + "\n總金額：NT# " + or.totalPrice)
 
 								if Doc == "" {
 									Doc = "店家：" + or.brandName + "\n訂單狀態：" + or.orderStatus + "\n訂購人：" + or.fullName + "\n總金額：NT# " + or.totalPrice
@@ -191,6 +191,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								}
 
 							}
+							log.Println(Doc)
 
 						}
 					}
