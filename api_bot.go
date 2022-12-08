@@ -64,7 +64,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					res, err := bot.IssueLinkToken(userID).Do()
 					for _, usr := range customers {
 						USERID := event.Source.UserID
-						rsd, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
+						rsd, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `username` = ?", userID, usr.ID)
 						if err != nil {
 							log.Println("exec failed:", err)
 							return
