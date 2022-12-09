@@ -56,6 +56,23 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				switch {
+				case strings.EqualFold(message.Text, "#account"):
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("歡迎使用Foodler BOT，請先綁定帳號，以使用完整功能！").
+							WithQuickReplies(linebot.NewQuickReplyItems(
+								linebot.NewQuickReplyButton(
+									"",
+									linebot.NewMessageAction("綁定帳號", "#link")),
+								linebot.NewQuickReplyButton(
+									"",
+									linebot.NewMessageAction("解除綁定", "#Unlink")),
+							)),
+					).Do(); err != nil {
+						log.Println("err:", err)
+						return
+					}
+
 				case strings.EqualFold(message.Text, "#link"):
 					//token link
 					//1. The bot server calls the API that issues a link token from the LINE user ID.
@@ -266,24 +283,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 					log.Println("source:>>>", event.Source, " group:>>", event.Source.GroupID, " room:>>", event.Source.RoomID)
-
-				case strings.EqualFold(message.Text, "#account"):
-					if _, err = bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage("歡迎使用Foodler BOT，請先綁定帳號，以使用完整功能！").
-							WithQuickReplies(linebot.NewQuickReplyItems(
-								linebot.NewQuickReplyButton(
-									"",
-									linebot.NewMessageAction("綁定帳號", "#link")),
-								linebot.NewQuickReplyButton(
-									"",
-									linebot.NewMessageAction("解除綁定", "#Unlink")),
-							)),
-					).Do(); err != nil {
-						log.Println("err:", err)
-						return
-					}
 				}
+
 			}
 
 		} else if event.Type == linebot.EventTypeAccountLink {
