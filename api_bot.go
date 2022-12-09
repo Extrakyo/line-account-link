@@ -127,46 +127,46 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 				case strings.EqualFold(message.Text, "#qeb"):
+					// for _, usr := range linkedCustomers {
+					// 	rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+					// 	if err != nil {
+					// 		panic(err.Error())
+					// 	}
+					// 	defer rs.Close()
+					// 	var ur LinkCustomer
+					// 	for rs.Next() {
+					// 		rs.Scan(&ur.userID)
+					// 	}
+					// 	log.Println("USERID:" + ur.userID)
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
-						if err != nil {
-							panic(err.Error())
-						}
-						defer rs.Close()
-						var ur LinkCustomer
-						for rs.Next() {
-							rs.Scan(&ur.userID)
-							if ur.userID == event.Source.UserID {
-								if _, err = bot.ReplyMessage(
-									event.ReplyToken,
-									linebot.NewTextMessage("查詢訂單").
-										WithQuickReplies(linebot.NewQuickReplyItems(
-											linebot.NewQuickReplyButton(
-												"",
-												linebot.NewMessageAction("訂單", "#order")),
-										)),
-								).Do(); err != nil {
-									log.Println("err:", err)
-									return
-								}
-							} else {
-								if _, err = bot.ReplyMessage(
-									event.ReplyToken,
-									linebot.NewTextMessage("你還未驗證帳號").
-										WithQuickReplies(linebot.NewQuickReplyItems(
-											linebot.NewQuickReplyButton(
-												"",
-												linebot.NewMessageAction("綁定帳號", "#link")),
-										)),
-								).Do(); err != nil {
-									log.Println("err:", err)
-									return
-								}
-
+						if usr.LinkUserID == event.Source.UserID {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("查詢訂單").
+									WithQuickReplies(linebot.NewQuickReplyItems(
+										linebot.NewQuickReplyButton(
+											"",
+											linebot.NewMessageAction("訂單", "#order")),
+									)),
+							).Do(); err != nil {
+								log.Println("err:", err)
+								return
 							}
-						}
-						log.Println("USERID:" + ur.userID)
+						} else {
+							if _, err = bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage("你還未驗證帳號").
+									WithQuickReplies(linebot.NewQuickReplyItems(
+										linebot.NewQuickReplyButton(
+											"",
+											linebot.NewMessageAction("綁定帳號", "#link")),
+									)),
+							).Do(); err != nil {
+								log.Println("err:", err)
+								return
+							}
 
+						}
 					}
 
 				case strings.EqualFold(message.Text, "#order"):
