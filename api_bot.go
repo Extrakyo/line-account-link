@@ -102,10 +102,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("exec failed:", err)
 								return
 							}
-							usr.LinkUserID = ""
-							usr.Nounce = ""
-							userID = ""
-							usr.Name = ""
+							// usr.LinkUserID = ""
+							// usr.Nounce = ""
+							// userID = ""
+							// usr.Name = ""
 							return
 
 						} else {
