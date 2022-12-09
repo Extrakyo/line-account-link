@@ -83,7 +83,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							panic(err.Error())
 						}
-
+						defer rs.Close()
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID)
@@ -132,7 +132,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							panic(err.Error())
 						}
-
+						defer rs.Close()
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID)
@@ -179,7 +179,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							panic(err.Error())
 						}
-
+						defer rs.Close()
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID)
@@ -207,6 +207,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								if err != nil {
 									panic(err.Error())
 								}
+								defer res.Close()
 								for res.Next() {
 									res.Scan(&or.brandName)
 								}
@@ -249,7 +250,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							panic(err.Error())
 						}
-						// log.Println("USERID:" + usr.userID)
+						defer rs.Close()
 
 						var ur LinkCustomer
 						for rs.Next() {
@@ -314,18 +315,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if usr.Nounce == event.AccountLink.Nonce {
 					//Append to linked DB.
 					USERID := event.Source.UserID
-					rsd, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
+					rs, err := db.Exec("UPDATE `linebot` SET `userId`= ? WHERE `nounce` = ?", USERID, usr.Nounce)
 					if err != nil {
 						log.Println("exec failed:", err)
 						return
 					}
-					log.Println(rsd)
-					log.Println("userID:" + USERID)
+					log.Println("update data successd:", rs)
 
 					results, err := db.Query("SELECT `username`, `nounce`, `userId`, `name` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
 					if err != nil {
 						panic(err.Error())
 					}
+					defer results.Close()
 
 					var linkedUser LinkCustomer
 					for results.Next() {

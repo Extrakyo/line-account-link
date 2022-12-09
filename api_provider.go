@@ -50,7 +50,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-
+	defer results.Close()
 	var user CustData
 	for results.Next() {
 		results.Scan(&user.ID, &user.PW, &user.Name)
@@ -95,7 +95,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					panic(err.Error())
 				}
-
+				defer results.Close()
 				for results.Next() {
 					results.Scan(&user.Nounce)
 					customers = append(customers, user)
