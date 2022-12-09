@@ -79,7 +79,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#Unlink"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -102,10 +102,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("exec failed:", err)
 								return
 							}
-							// usr.LinkUserID = ""
-							// usr.Nounce = ""
-							// userID = ""
-							// usr.Name = ""
+
 							return
 
 						} else {
@@ -128,7 +125,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#qeb"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -175,7 +172,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 						Doc := ""
 
-						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -246,7 +243,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					//Check user if it is linked.
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
