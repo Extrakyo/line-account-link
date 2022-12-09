@@ -174,17 +174,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 						Doc := ""
 
-						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
-						if err != nil {
-							panic(err.Error())
-						}
-						defer rs.Close()
-						var ur LinkCustomer
-						for rs.Next() {
-							rs.Scan(&ur.userID)
-						}
-						log.Println("USERID:" + ur.userID)
-						if ur.userID == event.Source.UserID {
+						// rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
+						// if err != nil {
+						// 	panic(err.Error())
+						// }
+						// defer rs.Close()
+						// var ur LinkCustomer
+						// for rs.Next() {
+						// 	rs.Scan(&ur.userID)
+						// }
+						// log.Println("USERID:" + ur.userID)
+						if usr.LinkUserID == event.Source.UserID {
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
