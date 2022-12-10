@@ -17,7 +17,6 @@ type LinkCustomer struct {
 	Name       string
 	Nounce     string
 	LinkUserID string
-	userID     string
 }
 type OrderList struct {
 	//Data from CustData from provider.
