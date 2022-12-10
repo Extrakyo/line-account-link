@@ -125,16 +125,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#qeb"):
 					for _, usr := range linkedCustomers {
-						// rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
-						// if err != nil {
-						// 	panic(err.Error())
-						// }
-						// defer rs.Close()
-						// var ur LinkCustomer
-						// for rs.Next() {
-						// 	rs.Scan(&ur.userID)
-						// }
-						// log.Println("USERID:" + ur.userID)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+						defer rs.Close()
+						var usr LinkCustomer
+						for rs.Next() {
+							rs.Scan(&usr.userID)
+						}
+						log.Println("USERID:" + usr.userID)
 
 						if usr.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
@@ -172,16 +172,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 						Doc := ""
 
-						// rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
-						// if err != nil {
-						// 	panic(err.Error())
-						// }
-						// defer rs.Close()
-						// var ur LinkCustomer
-						// for rs.Next() {
-						// 	rs.Scan(&ur.userID)
-						// }
-						// log.Println("USERID:" + ur.userID)
+						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+						defer rs.Close()
+						var usr LinkCustomer
+						for rs.Next() {
+							rs.Scan(&usr.userID)
+						}
+						log.Println("USERID:" + usr.userID)
 						if usr.userID == event.Source.UserID {
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
@@ -295,13 +295,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				defer rs.Close()
 
-				var urd LinkCustomer
+				var usr LinkCustomer
 				for rs.Next() {
-					rs.Scan(&urd.userID, &urd.Name)
+					rs.Scan(&usr.userID, &usr.Name)
 				}
 
-				if event.Source.UserID == urd.userID {
-					log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
+				if event.Source.UserID == usr.userID {
+					log.Println("使用者： ", usr.Name, " 的帳號已被綁定！")
 					return
 				}
 			}
