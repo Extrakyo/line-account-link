@@ -96,16 +96,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("err:", err)
 
 							}
-							log.Println("before_USERID:" + usr.LinkUserID)
+							log.Println("before_USERID:" + ur.userID)
+							usr.userID = ""
+							usr.LinkUserID = ""
+							usr.Nounce = ""
+							ur.userID = ""
 							_, err := db.Exec("DELETE FROM `linebot` WHERE `username` = ?", usr.ID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
 							}
-							usr.userID = ""
-							usr.LinkUserID = ""
-							usr.Nounce = ""
-
+							log.Println("已刪除USERID:" + ur.userID)
 							return
 
 						} else {
@@ -139,7 +140,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						log.Println("USERID:" + usr.LinkUserID)
 
-						if usr.LinkUserID == event.Source.UserID {
+						if ur.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("查詢訂單").
@@ -185,12 +186,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							rs.Scan(&ur.userID)
 						}
 						log.Println("USERID:" + ur.userID)
-						if usr.LinkUserID == event.Source.UserID {
+						if ur.userID == event.Source.UserID {
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
 								panic(err.Error())
 							}
+							defer rs.Close()
 							for rs.Next() {
 								var or OrderList
 								//取得店家名稱
