@@ -77,7 +77,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					}
 
-				case strings.EqualFold(message.Text, "#Unlink"):
+				case strings.EqualFold(message.Text, "#unlink"):
 					for _, usr := range linkedCustomers {
 						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
 						if err != nil {
@@ -126,9 +126,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					}
 
-				case strings.EqualFold(message.Text, "#qeb"):
+				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -146,7 +146,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									WithQuickReplies(linebot.NewQuickReplyItems(
 										linebot.NewQuickReplyButton(
 											"",
-											linebot.NewMessageAction("訂單", "#order")),
+											linebot.NewMessageAction("訂單", "#orderList")),
 									)),
 							).Do(); err != nil {
 								log.Println("err:", err)
@@ -170,12 +170,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					}
 
-				case strings.EqualFold(message.Text, "#order"):
+				case strings.EqualFold(message.Text, "#orderList"):
 					for _, usr := range linkedCustomers {
 
 						Doc := ""
 
-						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -191,7 +191,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							if err != nil {
 								panic(err.Error())
 							}
-
+							defer rs.Close()
 							for rs.Next() {
 								var or OrderList
 								//取得店家名稱
@@ -246,7 +246,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					//Check user if it is linked.
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -287,7 +287,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-				case strings.EqualFold(message.Text, "#ln"):
+				case strings.EqualFold(message.Text, "#news"):
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
 						linebot.NewTextMessage("您可以在此LineBot上進行查詢訂單，請先完成驗證").
@@ -301,7 +301,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-				case strings.EqualFold(message.Text, "#inf"):
+				case strings.EqualFold(message.Text, "#recommend"):
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
 						linebot.NewTextMessage("進入目錄後，點擊推薦按鈕即可邀請好友!")).Do(); err != nil {
