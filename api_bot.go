@@ -137,9 +137,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						for rs.Next() {
 							rs.Scan(&ur.userID)
 						}
-						log.Println("USERID:" + ur.userID)
+						log.Println("USERID:" + usr.LinkUserID)
 
-						if ur.userID == event.Source.UserID {
+						if usr.LinkUserID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("查詢訂單").
