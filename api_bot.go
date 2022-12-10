@@ -104,6 +104,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 							usr.LinkUserID = ""
 							usr.Nounce = ""
+							ur.userID = ""
 							userID = ""
 							usr.Name = ""
 							return
@@ -136,7 +137,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID)
-							linkedCustomers = append(linkedCustomers, ur)
 						}
 
 						if ur.userID == event.Source.UserID {
@@ -177,7 +177,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID)
-							linkedCustomers = append(linkedCustomers, ur)
 						}
 						if ur.userID == event.Source.UserID {
 							//取得訂單資料
@@ -243,9 +242,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID, &ur.Name)
-							linkedCustomers = append(linkedCustomers, ur)
 						}
-						log.Println("Userid:" + ur.userID)
 						if ur.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
@@ -305,7 +302,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				var ur LinkCustomer
 				for rs.Next() {
 					rs.Scan(&ur.userID, &ur.Name)
-					linkedCustomers = append(linkedCustomers, ur)
 				}
 
 				if ur.userID == event.Source.UserID {
