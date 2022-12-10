@@ -136,6 +136,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID)
+							linkedCustomers = append(linkedCustomers, ur)
 						}
 
 						if ur.userID == event.Source.UserID {
@@ -176,6 +177,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						var ur LinkCustomer
 						for rs.Next() {
 							rs.Scan(&ur.userID)
+							linkedCustomers = append(linkedCustomers, ur)
 						}
 						if ur.userID == event.Source.UserID {
 							//取得訂單資料
@@ -300,13 +302,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				// log.Println("USERID:" + usr.)
 
-				var urd LinkCustomer
+				var ur LinkCustomer
 				for rs.Next() {
-					rs.Scan(&urd.userID, &urd.Name)
+					rs.Scan(&ur.userID, &ur.Name)
+					linkedCustomers = append(linkedCustomers, ur)
 				}
 
-				if urd.userID == event.Source.UserID {
-					log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
+				if ur.userID == event.Source.UserID {
+					log.Println("使用者： ", ur.Name, " 的帳號已被綁定！")
 					return
 				}
 			}
