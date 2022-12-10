@@ -17,6 +17,8 @@ type LinkCustomer struct {
 	Name       string
 	Nounce     string
 	LinkUserID string
+	userID     string
+	name       string
 }
 type OrderList struct {
 	//Data from CustData from provider.
@@ -80,16 +82,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#Unlink"):
 					for _, usr := range linkedCustomers {
-						// rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
-						// if err != nil {
-						// 	panic(err.Error())
-						// }
-						// defer rs.Close()
-						// var ur LinkCustomer
-						// for rs.Next() {
-						// 	rs.Scan(&ur.userID)
-						// }
-						if usr.LinkUserID == event.Source.UserID {
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+						defer rs.Close()
+						var linkedUser LinkCustomer
+						for rs.Next() {
+							rs.Scan(&linkedUser.userID)
+						}
+						if linkedUser.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
@@ -126,18 +128,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#qeb"):
 					for _, usr := range linkedCustomers {
-						// rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
-						// if err != nil {
-						// 	panic(err.Error())
-						// }
-						// defer rs.Close()
-						// var ur LinkCustomer
-						// for rs.Next() {
-						// 	rs.Scan(&ur.userID)
-						// }
-						// log.Println("USERID:" + ur.userID)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+						defer rs.Close()
+						var linkedUser LinkCustomer
+						for rs.Next() {
+							rs.Scan(&linkedUser.userID)
+						}
+						log.Println("USERID:" + linkedUser.userID)
 
-						if usr.LinkUserID == event.Source.UserID {
+						if linkedUser.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("查詢訂單").
@@ -171,16 +173,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
 						Doc := ""
-						// rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
-						// if err != nil {
-						// 	panic(err.Error())
-						// }
-						// defer rs.Close()
-						// var ur LinkCustomer
-						// for rs.Next() {
-						// 	rs.Scan(&ur.userID)
-						// }
-						if usr.LinkUserID == event.Source.UserID {
+						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+						defer rs.Close()
+						var linkedUser LinkCustomer
+						for rs.Next() {
+							rs.Scan(&linkedUser.userID)
+						}
+						if linkedUser.userID == event.Source.UserID {
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
@@ -241,22 +243,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 					//Check user if it is linked.
 					for _, usr := range linkedCustomers {
-						// rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
-						// if err != nil {
-						// 	panic(err.Error())
-						// }
-						// defer rs.Close()
+						rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						if err != nil {
+							panic(err.Error())
+						}
+						defer rs.Close()
 
-						// var ur LinkCustomer
-						// for rs.Next() {
-						// 	rs.Scan(&ur.userID, &ur.Name)
-						// }
-						// log.Println("USERID:" + ur.userID)
+						var linkedUser LinkCustomer
+						for rs.Next() {
+							rs.Scan(&linkedUser.userID, &linkedUser.name)
+						}
+						log.Println("USERID:" + linkedUser.userID)
 
-						if usr.LinkUserID == event.Source.UserID {
+						if linkedUser.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
-								linebot.NewTextMessage("你好 "+usr.Name+"，您已成功綁定帳號！")).Do(); err != nil {
+								linebot.NewTextMessage("你好 "+usr.name+"，您已成功綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
 								return
 							}
