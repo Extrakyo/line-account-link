@@ -101,6 +101,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("exec failed:", err)
 								return
 							}
+							ur.userID = ""
 							log.Println("_USERID:" + ur.userID)
 							return
 
