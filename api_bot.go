@@ -128,7 +128,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -278,13 +278,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case strings.EqualFold(message.Text, "#news"):
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("您可以在此LineBot上進行查詢訂單，請先完成驗證").
-							WithQuickReplies(linebot.NewQuickReplyItems(
-								linebot.NewQuickReplyButton(
-									"",
-									linebot.NewMessageAction("綁定帳號", "#link")),
-							)),
-					).Do(); err != nil {
+						linebot.NewTextMessage("您可以在Foodler進行查詢訂單功能!")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}
