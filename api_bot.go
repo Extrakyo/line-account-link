@@ -300,6 +300,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("err:", err)
 						return
 					}
+
+				case strings.EqualFold(message.Text, "#inf"):
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("進入目錄後，點擊推薦按鈕即可邀請好友!")).Do(); err != nil {
+						log.Println("err:", err)
+					}
+
 				}
 			}
 
