@@ -88,7 +88,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						for rs.Next() {
 							rs.Scan(&ur.userID)
 						}
-						log.Println("USERID:" + ur.userID)
 						if ur.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
@@ -96,13 +95,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("err:", err)
 
 							}
-							log.Println("before_USERID:" + usr.LinkUserID)
+							log.Println("before_USERID:" + ur.userID)
 							_, err := db.Exec("DELETE FROM `linebot` WHERE `username` = ?", usr.ID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
 							}
-
+							log.Println("_USERID:" + ur.userID)
 							return
 
 						} else {
