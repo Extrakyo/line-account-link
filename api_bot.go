@@ -128,7 +128,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `username` = ?", usr.ID)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -280,7 +280,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 									linebot.NewMessageAction("綁定帳號", "#link")),
 								linebot.NewQuickReplyButton(
 									"",
-									linebot.NewMessageAction("解除綁定", "#Unlink")),
+									linebot.NewMessageAction("解除綁定", "#unlink")),
 							)),
 					).Do(); err != nil {
 						log.Println("err:", err)
@@ -312,24 +312,24 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else if event.Type == linebot.EventTypeAccountLink {
-			// log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			// for _, user := range linkedCustomers {
-			// 	rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
-			// 	if err != nil {
-			// 		panic(err.Error())
-			// 	}
-			// 	// log.Println("USERID:" + usr.)
+			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
+			for _, user := range linkedCustomers {
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `nounce` = ?", user.Nounce)
+				if err != nil {
+					panic(err.Error())
+				}
+				// log.Println("USERID:" + usr.)
 
-			// 	var urd LinkCustomer
-			// 	for rs.Next() {
-			// 		rs.Scan(&urd.userID, &urd.Name)
-			// 	}
+				var urd LinkCustomer
+				for rs.Next() {
+					rs.Scan(&urd.userID, &urd.Name)
+				}
 
-			// 	if urd.userID == event.Source.UserID {
-			// 		log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
-			// 		return
-			// 	}
-			// }
+				if urd.userID == event.Source.UserID {
+					log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
+					return
+				}
+			}
 
 			//search from all user using nounce.
 			for _, usr := range customers {
