@@ -286,6 +286,20 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("err:", err)
 						return
 					}
+
+				case strings.EqualFold(message.Text, "#ln"):
+					if _, err = bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage("您可以在此LineBot上進行查詢訂單，請先完成驗證").
+							WithQuickReplies(linebot.NewQuickReplyItems(
+								linebot.NewQuickReplyButton(
+									"",
+									linebot.NewMessageAction("綁定帳號", "#link")),
+							)),
+					).Do(); err != nil {
+						log.Println("err:", err)
+						return
+					}
 				}
 			}
 
