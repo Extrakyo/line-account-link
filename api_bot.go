@@ -141,7 +141,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 				case strings.EqualFold(message.Text, "#qeb"):
-					for _, usr := range linkedCustomers {
+					for _, usr := range customers {
 						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
 						if err != nil {
 							panic(err.Error())
