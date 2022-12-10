@@ -134,12 +134,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							panic(err.Error())
 						}
 						defer rs.Close()
-						var ur LinkCustomer
+						var urdf LinkCustomer
 						for rs.Next() {
-							rs.Scan(&ur.userID)
+							rs.Scan(&urdf.userID)
 						}
 
-						if usr.LinkUserID == event.Source.UserID {
+						if urdf.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("查詢訂單").
@@ -174,11 +174,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							panic(err.Error())
 						}
 						defer rs.Close()
-						var ur LinkCustomer
+						var udr LinkCustomer
 						for rs.Next() {
-							rs.Scan(&ur.userID)
+							rs.Scan(&udr.userID)
 						}
-						if usr.LinkUserID == event.Source.UserID {
+						if udr.userID == event.Source.UserID {
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
@@ -239,14 +239,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						defer rs.Close()
 
-						var ur LinkCustomer
+						var urf LinkCustomer
 						for rs.Next() {
-							rs.Scan(&ur.userID, &ur.Name)
+							rs.Scan(&urf.userID, &urf.Name)
 						}
-						if usr.LinkUserID == event.Source.UserID {
+						if urf.LinkUserID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
-								linebot.NewTextMessage("你好 "+ur.Name+"，您已成功綁定帳號！")).Do(); err != nil {
+								linebot.NewTextMessage("你好 "+urf.Name+"，您已成功綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
 								return
 							}
