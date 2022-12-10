@@ -155,13 +155,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						} else {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
-								linebot.NewTextMessage("你還未驗證帳號").
-									WithQuickReplies(linebot.NewQuickReplyItems(
-										linebot.NewQuickReplyButton(
-											"",
-											linebot.NewMessageAction("綁定帳號", "#link")),
-									)),
-							).Do(); err != nil {
+								linebot.NewTextMessage("你還未驗證帳號!")).Do(); err != nil {
 								log.Println("err:", err)
 								return
 							}
@@ -175,7 +169,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 						Doc := ""
 
-						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `username` = ?", usr.ID)
 						if err != nil {
 							panic(err.Error())
 						}
@@ -230,13 +224,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						} else {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
-								linebot.NewTextMessage("你還未驗證帳號").
-									WithQuickReplies(linebot.NewQuickReplyItems(
-										linebot.NewQuickReplyButton(
-											"",
-											linebot.NewMessageAction("綁定帳號", "#link")),
-									)),
-							).Do(); err != nil {
+								linebot.NewTextMessage("你還未驗證帳號!")).Do(); err != nil {
 								log.Println("err:", err)
 								return
 							}
