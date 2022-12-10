@@ -81,17 +81,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#Unlink"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
-						if err != nil {
-							panic(err.Error())
-						}
-						defer rs.Close()
-						var ur LinkCustomer
-						for rs.Next() {
-							rs.Scan(&ur.userID)
-						}
-						log.Println("USERID:" + ur.userID)
-						if ur.userID == event.Source.UserID {
+						// rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						// if err != nil {
+						// 	panic(err.Error())
+						// }
+						// defer rs.Close()
+						// var ur LinkCustomer
+						// for rs.Next() {
+						// 	rs.Scan(&ur.userID)
+						// }
+						if usr.LinkUserID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
@@ -127,18 +126,18 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#qeb"):
 					for _, usr := range linkedCustomers {
-						rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
-						if err != nil {
-							panic(err.Error())
-						}
-						defer rs.Close()
-						var ur LinkCustomer
-						for rs.Next() {
-							rs.Scan(&ur.userID)
-						}
-						log.Println("USERID:" + ur.userID)
+						// rs, err := db.Query("SELECT `userId` FROM linebot WHERE `nounce` = ?", usr.Nounce)
+						// if err != nil {
+						// 	panic(err.Error())
+						// }
+						// defer rs.Close()
+						// var ur LinkCustomer
+						// for rs.Next() {
+						// 	rs.Scan(&ur.userID)
+						// }
+						// log.Println("USERID:" + ur.userID)
 
-						if ur.userID == event.Source.UserID {
+						if usr.LinkUserID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("查詢訂單").
@@ -171,20 +170,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				case strings.EqualFold(message.Text, "#order"):
 					for _, usr := range linkedCustomers {
-
 						Doc := ""
-
-						rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
-						if err != nil {
-							panic(err.Error())
-						}
-						defer rs.Close()
-						var ur LinkCustomer
-						for rs.Next() {
-							rs.Scan(&ur.userID)
-						}
-						log.Println("USERID:" + ur.userID)
-						if ur.userID == event.Source.UserID {
+						// rs, err := db.Query("SELECT `userId` FROM `linebot` WHERE `nounce` = ?", usr.Nounce)
+						// if err != nil {
+						// 	panic(err.Error())
+						// }
+						// defer rs.Close()
+						// var ur LinkCustomer
+						// for rs.Next() {
+						// 	rs.Scan(&ur.userID)
+						// }
+						if usr.LinkUserID == event.Source.UserID {
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
