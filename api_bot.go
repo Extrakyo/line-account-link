@@ -188,7 +188,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							if err != nil {
 								panic(err.Error())
 							}
-
+							defer rs.Close()
 							for rs.Next() {
 								var or OrderList
 								//取得店家名稱
