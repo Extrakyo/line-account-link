@@ -84,25 +84,25 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							panic(err.Error())
 						}
 						defer rs.Close()
-						var usr LinkCustomer
+						var ur LinkCustomer
 						for rs.Next() {
-							rs.Scan(&usr.userID)
+							rs.Scan(&ur.userID)
 						}
-						if usr.userID == event.Source.UserID {
+						log.Println("USERID:" + ur.userID)
+						if ur.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("您已成功取消綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
 
 							}
-							log.Println("before_USERID:" + usr.userID)
+							log.Println("before_USERID:" + usr.LinkUserID)
 							_, err := db.Exec("DELETE FROM `linebot` WHERE `username` = ?", usr.ID)
 							if err != nil {
 								log.Println("exec failed:", err)
 								return
 							}
-							usr.userID = ""
-							log.Println("_USERID:" + usr.userID)
+
 							return
 
 						} else {
@@ -130,13 +130,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							panic(err.Error())
 						}
 						defer rs.Close()
-						var usr LinkCustomer
+						var ur LinkCustomer
 						for rs.Next() {
-							rs.Scan(&usr.userID)
+							rs.Scan(&ur.userID)
 						}
-						log.Println("USERID:" + usr.userID)
+						log.Println("USERID:" + ur.userID)
 
-						if usr.userID == event.Source.UserID {
+						if ur.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
 								linebot.NewTextMessage("查詢訂單").
@@ -177,18 +177,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							panic(err.Error())
 						}
 						defer rs.Close()
-						var usr LinkCustomer
+						var ur LinkCustomer
 						for rs.Next() {
-							rs.Scan(&usr.userID)
+							rs.Scan(&ur.userID)
 						}
-						log.Println("USERID:" + usr.userID)
-						if usr.userID == event.Source.UserID {
+						log.Println("USERID:" + ur.userID)
+						if ur.userID == event.Source.UserID {
 							//取得訂單資料
 							rs, err := db.Query("SELECT `brandId`, `orderStatus`, `fullName`, `totalPrice` FROM `orderList` WHERE `username` = ? AND (`orderStatus` = 'isReceived' OR `orderStatus` = 'isPreparing') ORDER BY `needTime` DESC", usr.ID)
 							if err != nil {
 								panic(err.Error())
 							}
-							defer rs.Close()
 							for rs.Next() {
 								var or OrderList
 								//取得店家名稱
@@ -249,16 +248,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 						defer rs.Close()
 
-						var usr LinkCustomer
+						var ur LinkCustomer
 						for rs.Next() {
-							rs.Scan(&usr.userID, &usr.Name)
+							rs.Scan(&ur.userID, &ur.Name)
 						}
-						log.Println("USERID:" + usr.userID)
+						log.Println("USERID:" + ur.userID)
 
-						if usr.userID == event.Source.UserID {
+						if ur.userID == event.Source.UserID {
 							if _, err = bot.ReplyMessage(
 								event.ReplyToken,
-								linebot.NewTextMessage("你好 "+usr.Name+"，您已成功綁定帳號！")).Do(); err != nil {
+								linebot.NewTextMessage("你好 "+ur.Name+"，您已成功綁定帳號！")).Do(); err != nil {
 								log.Println("err:", err)
 								return
 							}
@@ -295,13 +294,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				defer rs.Close()
 
-				var usr LinkCustomer
+				var urd LinkCustomer
 				for rs.Next() {
-					rs.Scan(&usr.userID, &usr.Name)
+					rs.Scan(&urd.userID, &urd.Name)
 				}
 
-				if event.Source.UserID == usr.userID {
-					log.Println("使用者： ", usr.Name, " 的帳號已被綁定！")
+				if event.Source.UserID == urd.userID {
+					log.Println("使用者： ", urd.Name, " 的帳號已被綁定！")
 					return
 				}
 			}
