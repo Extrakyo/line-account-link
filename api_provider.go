@@ -109,12 +109,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 					log.Println("Template err:", err)
 				}
 				return
+			} else {
+				fmt.Fprintf(w, "密碼輸入錯誤!!")
 			}
-			fmt.Fprintf(w, "密碼輸入錯誤!!")
+		} else {
+			fmt.Fprintf(w, "查無此帳號!")
 		}
-		fmt.Fprintf(w, "查無此帳號!")
 	}
 	fmt.Fprintf(w, "尚未輸入帳號密碼!")
+
 }
 
 func link(w http.ResponseWriter, r *http.Request) {
