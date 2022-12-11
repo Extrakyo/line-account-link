@@ -112,6 +112,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	fmt.Fprintf(w, "你輸入的帳號有誤!")
 }
 
 func link(w http.ResponseWriter, r *http.Request) {
