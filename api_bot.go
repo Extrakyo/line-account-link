@@ -152,16 +152,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("err:", err)
 								return
 							}
-						} else {
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("你還未驗證帳號!")).Do(); err != nil {
-								log.Println("err:", err)
-								return
-							}
-
 						}
-
 					}
 
 				case strings.EqualFold(message.Text, "#orderList"):
@@ -220,15 +211,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								return
 							}
 							return
-						} else {
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("你還未驗證帳號!")).Do(); err != nil {
-								log.Println("err:", err)
-								return
-							}
-
 						}
+
 					}
 
 					//Check user if it is linked.
