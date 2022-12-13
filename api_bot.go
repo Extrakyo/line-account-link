@@ -291,24 +291,24 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else if event.Type == linebot.EventTypeAccountLink {
-			// log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			// for _, user := range linkedCustomers {
-			// 	rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `name` = ?", user.Nounce)
-			// 	if err != nil {
-			// 		panic(err.Error())
-			// 	}
-			// 	// log.Println("USERID:" + usr.)
+			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
+			for _, user := range linkedCustomers {
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `name` = ?", user.ID)
+				if err != nil {
+					panic(err.Error())
+				}
+				// log.Println("USERID:" + usr.)
 
-			// 	var ur LinkCustomer
-			// 	for rs.Next() {
-			// 		rs.Scan(&ur.userID, &ur.Name)
-			// 	}
+				var ur LinkCustomer
+				for rs.Next() {
+					rs.Scan(&ur.userID, &ur.Name)
+				}
 
-			// 	if ur.userID == event.Source.UserID {
-			// 		log.Println("使用者： ", ur.Name, " 的帳號已被綁定！")
-			// 		return
-			// 	}
-			// }
+				if ur.userID == event.Source.UserID {
+					log.Println("使用者： ", ur.Name, " 的帳號已被綁定！")
+					return
+				}
+			}
 
 			//search from all user using nounce.
 			for _, usr := range customers {
