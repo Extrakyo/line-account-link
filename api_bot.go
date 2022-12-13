@@ -74,6 +74,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
+						return
 
 					}
 
@@ -107,7 +108,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							ur.userID = ""
 							userID = ""
 							usr.Name = ""
-							userID = ""
 							return
 
 						} else {
@@ -294,7 +294,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		} else if event.Type == linebot.EventTypeAccountLink {
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
 			for _, user := range linkedCustomers {
-				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `name` = ?", user.ID)
+				rs, err := db.Query("SELECT `userId`, `name` FROM linebot WHERE `username` = ?", user.ID)
 				if err != nil {
 					panic(err.Error())
 				}
