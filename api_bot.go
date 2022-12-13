@@ -109,22 +109,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							usr.Name = ""
 							return
 
-						} else {
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage("還未綁定無法取消").
-									WithQuickReplies(linebot.NewQuickReplyItems(
-										linebot.NewQuickReplyButton(
-											"",
-											linebot.NewMessageAction("綁定帳號", "#link")),
-									)),
-							).Do(); err != nil {
-								log.Println("err:", err)
-								return
-							}
-
 						}
-
 					}
 
 				case strings.EqualFold(message.Text, "#order"):
