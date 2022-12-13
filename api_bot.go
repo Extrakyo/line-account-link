@@ -107,6 +107,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							ur.userID = ""
 							userID = ""
 							usr.Name = ""
+							userID = ""
 							return
 
 						} else {
