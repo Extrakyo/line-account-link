@@ -74,10 +74,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						event.ReplyToken,
 						linebot.NewTextMessage("點擊連結以綁定帳號： "+serverURL+"link?linkToken="+res.LinkToken)).Do(); err != nil {
 						log.Println("err:", err)
-						return
 
 					}
-					return
 
 				case strings.EqualFold(message.Text, "#unlink"):
 					for _, usr := range linkedCustomers {
@@ -126,7 +124,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 
 						}
-						return
 
 					}
 
@@ -162,7 +159,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("err:", err)
 								return
 							}
-							return
 
 						}
 
@@ -231,7 +227,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								log.Println("err:", err)
 								return
 							}
-							return
 
 						}
 					}
@@ -284,16 +279,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						log.Println("err:", err)
 						return
 					}
-					return
 
 				case strings.EqualFold(message.Text, "#recommend"):
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
 						linebot.NewTextMessage("進入目錄後，點擊推薦按鈕即可邀請好友!")).Do(); err != nil {
 						log.Println("err:", err)
-						return
 					}
-					return
 
 				}
 			}
@@ -316,7 +308,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println("使用者： ", ur.Name, " 的帳號已被綁定！")
 					return
 				}
-				return
 			}
 
 			//search from all user using nounce.
