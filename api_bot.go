@@ -189,13 +189,35 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 								}
 							}
 							log.Println(Doc)
-							if _, err = bot.ReplyMessage(
-								event.ReplyToken,
-								linebot.NewTextMessage(Doc)).Do(); err != nil {
-								log.Println("err:", err)
-								return
+							// if _, err = bot.ReplyMessage(
+							// 	event.ReplyToken,
+							// 	linebot.NewTextMessage(Doc)).Do(); err != nil {
+							// 	log.Println("err:", err)
+							// 	return
+							// }
+							// return
+
+							if _, err = bot.ReplyMessage(event.ReplyToken,
+								linebot.NewTextMessage(Doc),
+								linebot.NewFlexMessage("image",
+									&linebot.BubbleContainer{
+										Type: linebot.FlexContainerTypeBubble,
+										Hero: &linebot.ImageComponent{
+											Type: linebot.FlexComponentTypeText,
+										},
+										Body: &linebot.BoxComponent{
+											Type:   linebot.FlexComponentTypeBox,
+											Layout: linebot.FlexBoxLayoutTypeVertical,
+											Contents: []linebot.FlexComponent{
+												&linebot.TextComponent{
+													Type: linebot.FlexComponentTypeText,
+													Text: "hello",
+												},
+											},
+										},
+									})).Do(); err != nil {
+								log.Print(err)
 							}
-							return
 						}
 
 					}
