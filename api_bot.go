@@ -217,7 +217,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 										},
 									})).Do(); err != nil {
 								log.Print(err)
+								return
 							}
+							return
 						}
 
 					}
